@@ -19,11 +19,20 @@ main {
 	border: 3px solid red;
 }
 
+.myNavBar {
+	padding-block: 30px;
+}
+
 @media (min-width: 768px) {
 	#root {
-		flex-direction: row;
+		display: grid;
+		grid-template-areas: "sidebar main";
+		grid-template-columns: 100px auto;
 	}
 	main {
 		padding-top: 60px;
+	}
+	.myNavBar {
+		padding-block: 0px;
 	}
 }
