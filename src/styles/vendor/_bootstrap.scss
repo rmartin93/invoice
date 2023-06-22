@@ -1,0 +1,53 @@
+// $grid-breakpoints: (
+// 	xs: 0,
+// 	sm: 576px,
+// 	md: 768px,
+// 	lg: 992px,
+// 	xl: 1200px,
+// 	xxl: 1400px,
+// );
+
+@use "../abstracts/colors" as color;
+
+$theme-colors: (
+	"primary": color.$primary,
+	"secondary": color.$secondary,
+	//   "success":    $success,
+	"info": color.$info,
+	//   "warning":    $warning,
+	"danger": color.$danger,
+	"light": color.$light,
+	"dark": color.$dark,
+);
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius: 24px;
+// $btn-border-radius-sm: var(--#{$prefix}border-radius-sm);
+// $btn-border-radius-lg: var(--#{$prefix}border-radius-lg);
+$btn-font-size: 15px;
+$btn-line-height: 15px;
+
+$btn-padding-y: 15px;
+$btn-padding-x: 24px;
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+
+$color-mode-type: data;
+
+// Default Color Mode Colors
+@include color-mode(dark) {
+	color: $light;
+	background-color: $dark;
+	.card h2 {
+		color: $light;
+	}
+}
+@include color-mode(light) {
+	color: var(--bs-light-text-emphasis);
+	background-color: $light;
+	.navModalBody {
+		background-color: $dark;
+		a {
+			color: $light;
+		}
+	}
+}

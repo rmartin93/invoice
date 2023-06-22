@@ -1,0 +1,41 @@
+@use "../abstracts/colors" as color;
+.btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	div {
+		margin-top: 2px;
+	}
+}
+
+.btn-icon {
+	padding: 6px 15px 6px 4px;
+	svg {
+		font-size: 32px;
+	}
+	span {
+		margin-top: 2px;
+	}
+}
+.btn-primary {
+	color: color.$light;
+	&:hover {
+		color: color.$light;
+	}
+}
+
+.btn-light {
+	color: color.$info;
+	&:hover {
+		color: color.$info;
+		background-color: color.$lightAccent;
+		border-color: color.$lightAccent;
+	}
+}
+
+.btn-danger {
+	color: color.$white;
+	&:hover {
+		color: color.$light;
+	}
+}
