@@ -1,0 +1,18 @@
+@use "../abstracts/colors" as color;
+
+label {
+	color: color.$info;
+	padding-left: 6px;
+	padding-bottom: 4px;
+}
+
+.form-control,
+.form-select {
+	border: 1px solid color.$lightAccent;
+	&:focus {
+		border: 1px solid color.$primaryAccent;
+		box-shadow: none;
+	}
+}
+
+// See bootstrap.scss for dark mode form styling

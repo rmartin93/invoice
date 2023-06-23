@@ -1,5 +1,13 @@
 import { HiPlusCircle, HiPlus } from "react-icons/hi";
+import { BsSun, BsMoon } from "react-icons/bs";
+import { useTheme } from "../hooks/useTheme";
 export default function ThemeElements() {
+	// Sample code for grabbing the date from a date input
+	// const dateControl = document.querySelector('input[type="date"]');
+	// dateControl.value = "2017-06-01";
+	// console.log(dateControl.value); // prints "2017-06-01"
+	// console.log(dateControl.valueAsNumber); // prints 1496275200000, a
+	const { theme, toggleTheme } = useTheme();
 	return (
 		<section className="theme-elements">
 			<div className="container bg-white py-3 rounded-4">
@@ -90,15 +98,47 @@ export default function ThemeElements() {
 						</button>
 					</div>
 				</div>
-				<div className="row mt-3">
-					<div className="col-12">
+				<div className="row py-5" data-bs-theme={theme}>
+					<div className="col-6">
 						<h1>Form Elements</h1>
 					</div>
+					<div className="col-6">
+						<button
+							type="button"
+							className={`btn btn-icon-only ms-auto btn-${
+								theme === "dark" ? "light" : "dark"
+							}`}
+							onClick={() => toggleTheme(theme)}
+						>
+							{theme === "dark" ? <BsSun /> : <BsMoon />}
+						</button>
+					</div>
 				</div>
-				<div className="row mt-3">
+				<div className="row py-5" data-bs-theme={theme}>
 					<div className="col-3">
+						<p className="text-center text-info">Text</p>
 						<label htmlFor="name">Name</label>
 						<input type="text" className="form-control" id="name" />
+					</div>
+					<div className="col-3">
+						<p className="text-center text-info">Dropdown</p>
+						<label htmlFor="name">Payment Terms</label>
+						<select className="form-select" id="payment-terms">
+							<option value="1">Net 1 Day</option>
+							<option value="7">Net 7 Days</option>
+							<option value="14">Net 14 Days</option>
+							<option value="30">Net 30 Days</option>
+						</select>
+					</div>
+					<div className="col-3">
+						<p className="text-center text-info">Date Picker</p>
+						<label for="start">Start date:</label>
+						<input
+							className="form-control"
+							type="date"
+							id="start"
+							name="trip-start"
+						/>
 					</div>
 				</div>
 			</div>
