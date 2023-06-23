@@ -12,7 +12,7 @@
 $theme-colors: (
 	"primary": color.$primary,
 	"secondary": color.$secondary,
-	//   "success":    $success,
+	"success": color.$success,
 	"info": color.$info,
 	//   "warning":    $warning,
 	"danger": color.$danger,
@@ -35,7 +35,7 @@ $color-mode-type: data;
 
 // Default Color Mode Colors
 @include color-mode(dark) {
-	color: color.$light;
+	color: color.$white;
 	background-color: color.$dark;
 	h1,
 	h2,
@@ -56,7 +56,23 @@ $color-mode-type: data;
 			box-shadow: none;
 		}
 	}
+
+	.card {
+		color: color.$white;
+		background-color: color.$secondary;
+	}
 }
 @include color-mode(light) {
 	background-color: color.$light;
+}
+
+.alert {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.alert-success {
+	background-color: rgba(51, 214, 160, 0.15);
+	color: #33d69f;
 }

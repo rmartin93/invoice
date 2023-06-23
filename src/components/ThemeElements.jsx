@@ -10,7 +10,7 @@ export default function ThemeElements() {
 	const { theme, toggleTheme } = useTheme();
 	return (
 		<section className="theme-elements">
-			<div className="container bg-white py-3 rounded-4">
+			<div className="container bg-white pt-3 mb-3 rounded-4">
 				<div className="row">
 					<div className="col-12">
 						<h1>Colors</h1>

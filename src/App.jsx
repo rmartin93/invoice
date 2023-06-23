@@ -8,12 +8,14 @@ function App() {
 	return (
 		<BrowserRouter>
 			<ScrollToTop />
-			<NavBar />
-			<main data-bs-theme={theme}>
-				<Routes>
-					<Route path="/" element={<Home />} />
-				</Routes>
-			</main>
+			<div className="layout-wrapper" data-bs-theme={theme}>
+				<NavBar />
+				<main>
+					<Routes>
+						<Route path="/" element={<Home />} />
+					</Routes>
+				</main>
+			</div>
 		</BrowserRouter>
 	);
 }
