@@ -14,7 +14,7 @@ $theme-colors: (
 	"secondary": color.$secondary,
 	"success": color.$success,
 	"info": color.$info,
-	//   "warning":    $warning,
+	"warning": #ff8f00,
 	"danger": color.$danger,
 	"light": color.$light,
 	"dark": color.$dark,
@@ -25,7 +25,7 @@ $container-max-widths: (
 	md: 720px,
 	lg: 960px,
 	//   xl: 1140px,
-	//   xxl: 1320px,
+	//   xxl: 1320px,,,,,,,,,,,,,,,,
 );
 
 // Allows for customizing button radius independently from global border radius
@@ -37,6 +37,7 @@ $btn-line-height: 15px;
 
 $btn-padding-y: 15px;
 $btn-padding-x: 24px;
+
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
 $color-mode-type: data;
@@ -72,4 +73,12 @@ $color-mode-type: data;
 }
 @include color-mode(light) {
 	background-color: color.$light;
+}
+
+.text-secondaryOther {
+	color: color.$secondaryOther;
+}
+
+input[type="checkbox"] {
+	accent-color: color.$primary;
 }

@@ -1,13 +1,12 @@
 @use "../abstracts/colors" as color;
 .invoice-list {
-	a {
+	.invoice-row {
 		text-decoration: none;
 		color: color.$dark;
 		&:hover {
-			// margin-top: -4px;
-			// margin-bottom: 20px !important;
 			padding-right: 1rem;
 			padding-left: 1rem;
+			cursor: pointer;
 		}
 	}
 	.alert {
@@ -28,5 +27,8 @@
 	.alert-success {
 		background-color: rgba(51, 214, 160, 0.15);
 		color: #33d69f;
+	}
+	.alert-warning {
+		color: #ff8f00;
 	}
 }

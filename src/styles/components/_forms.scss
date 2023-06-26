@@ -15,4 +15,13 @@ label {
 	}
 }
 
+.filter-checkbox {
+	&:hover {
+		cursor: pointer;
+	}
+	> * {
+		pointer-events: none;
+	}
+}
+
 // See bootstrap.scss for dark mode form styling
