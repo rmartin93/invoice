@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-export default function Invoice({ setInvoiceId }) {
+export default function Invoice() {
 	const { id } = useParams();
 	return (
 		<div className="invoice">

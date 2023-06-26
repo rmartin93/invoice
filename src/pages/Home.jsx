@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle } from "react-icons/hi";
 
-export default function Home({ setInvoiceId }) {
+export default function Home() {
+	const temp = 0;
 	const dialog = useRef();
 	const [draft, setDraft] = useState(false);
 	const [pending, setPending] = useState(false);
@@ -35,6 +36,26 @@ export default function Home({ setInvoiceId }) {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+	if (temp === 1) {
+		return (
+			<div className="empty-invoices">
+				<section className="container">
+					<div className="row">
+						<div className="col">
+							<div className="empty-invoices-img"></div>
+							<div className="text-center">
+								<h1>There is nothing here</h1>
+								<p>
+									Create an invoice by clicking the <strong>New Invoice</strong>{" "}
+									button and get started
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		);
+	}
 	return (
 		<div className="home">
 			<section className="invoice-list container">

@@ -1,0 +1,17 @@
+@use "../abstracts/colors" as color;
+.empty-invoices {
+	&-img {
+		background-image: url("../../assets/illustration-empty.svg");
+		background-size: contain;
+		background-position: center;
+		background-repeat: no-repeat;
+		height: 340px;
+		width: 240px;
+		margin: 0 auto;
+	}
+	p {
+		width: 200px;
+		margin: 0 auto;
+		color: color.$secondaryOther;
+	}
+}
