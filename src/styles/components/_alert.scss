@@ -1,0 +1,32 @@
+@use "../abstracts/colors" as color;
+.invoice-list {
+	a {
+		text-decoration: none;
+		color: color.$dark;
+		&:hover {
+			// margin-top: -4px;
+			// margin-bottom: 20px !important;
+			padding-right: 1rem;
+			padding-left: 1rem;
+		}
+	}
+	.alert {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 130px;
+		max-width: 100%;
+		span {
+			font-size: 18px;
+			margin-top: 2px;
+		}
+		svg {
+			font-size: 12px;
+		}
+	}
+
+	.alert-success {
+		background-color: rgba(51, 214, 160, 0.15);
+		color: #33d69f;
+	}
+}

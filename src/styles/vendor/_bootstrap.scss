@@ -20,6 +20,14 @@ $theme-colors: (
 	"dark": color.$dark,
 );
 
+$container-max-widths: (
+	sm: 540px,
+	md: 720px,
+	lg: 960px,
+	//   xl: 1140px,
+	//   xxl: 1320px,
+);
+
 // Allows for customizing button radius independently from global border radius
 $btn-border-radius: 24px;
 // $btn-border-radius-sm: var(--#{$prefix}border-radius-sm);
@@ -64,15 +72,4 @@ $color-mode-type: data;
 }
 @include color-mode(light) {
 	background-color: color.$light;
-}
-
-.alert {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.alert-success {
-	background-color: rgba(51, 214, 160, 0.15);
-	color: #33d69f;
 }
