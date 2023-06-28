@@ -25,7 +25,7 @@ $container-max-widths: (
 	md: 720px,
 	lg: 960px,
 	//   xl: 1140px,
-	//   xxl: 1320px,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+	//   xxl: 1320px,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 // Allows for customizing button radius independently from global border radius
@@ -84,6 +84,16 @@ $color-mode-type: data;
 
 	.dark-white {
 		color: color.$white !important;
+	}
+
+	.btn-light {
+		background-color: #252945;
+		color: color.$info;
+		border-color: #252945;
+		&:hover {
+			background-color: rgba(37, 41, 69, 0.8);
+			border-color: rgba(37, 41, 69, 0.8);
+		}
 	}
 }
 @include color-mode(light) {

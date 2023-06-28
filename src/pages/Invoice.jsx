@@ -478,8 +478,8 @@ export default function Invoice() {
 						</div>
 					</form>
 				</div>
-				<div className="position-absolute bottom-0 start-0 w-100">
-					<div className="d-flex gap-3 justify-content-end align-items-center bg-white p-4 shadow-lg overflow-auto rounded-end-4">
+				<div className="card border-0 position-absolute bottom-0 start-0 w-100">
+					<div className="card-body d-flex gap-3 justify-content-end align-items-center p-4 shadow-lg overflow-auto rounded-end-4">
 						<button
 							className="btn btn-light"
 							data-bs-dismiss="offcanvas"
