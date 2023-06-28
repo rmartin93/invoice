@@ -8,9 +8,11 @@ import { FaTrash } from "react-icons/fa";
 import { HiPlus, HiPlusCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "../database/supabaseClient";
 
 export default function Home() {
 	const temp = 0;
+	const [countries, setCountries] = useState([]);
 	const editForm = useRef();
 	const dialog = useRef();
 	const [draft, setDraft] = useState(false);
@@ -33,11 +35,18 @@ export default function Home() {
 	};
 	// add event listener to handle click outside
 	useEffect(() => {
+		getCountries();
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+
+	async function getCountries() {
+		const { data } = await supabase.from("countries").select();
+		setCountries(data);
+	}
+	console.log("countries", countries);
 	if (temp === 1) {
 		return (
 			<div className="empty-invoices">
@@ -334,23 +343,23 @@ export default function Home() {
 			</section>
 			{/* Offcanvas Create Form */}
 			<div
-				class="offcanvas offcanvas-start"
-				tabindex="-1"
+				className="offcanvas offcanvas-start"
+				tabIndex="-1"
 				id="offcanvasCreate"
 				aria-labelledby="offcanvasLabel"
 			>
-				<div class="offcanvas-header p-5 pb-4">
-					<h5 class="offcanvas-title dark-white" id="offcanvasLabel">
+				<div className="offcanvas-header p-5 pb-4">
+					<h5 className="offcanvas-title dark-white" id="offcanvasLabel">
 						New Invoice
 					</h5>
 					<button
 						type="button"
-						class="btn-close"
+						className="btn-close"
 						data-bs-dismiss="offcanvas"
 						aria-label="Close"
 					></button>
 				</div>
-				<div class="offcanvas-body p-5 pt-0">
+				<div className="offcanvas-body p-5 pt-0">
 					<form ref={editForm} style={{ paddingBottom: "6rem" }}>
 						<h6 className="text-primary mb-4">Bill From</h6>
 						<div className="mb-3">
@@ -372,7 +381,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="city"
 									placeholder="London"
 									name="fromCity"
@@ -384,7 +393,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="postCode"
 									placeholder="E1 7HP"
 									name="fromPostCode"
@@ -396,7 +405,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
 									name="fromCountry"
@@ -447,7 +456,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="city"
 									placeholder="Bradford"
 									name="clientCity"
@@ -459,7 +468,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="postCode"
 									placeholder="BD1 9PB"
 									name="clientPostCode"
@@ -471,7 +480,7 @@ export default function Home() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
 									name="clientCountry"

@@ -158,10 +158,12 @@ export default function Invoice() {
 							<div className="price-table-wrapper card-body p-4">
 								<table className="table table-borderless fs-5">
 									<thead className="text-info">
-										<th className="fw-normal">Item Name</th>
-										<th className="text-end fw-normal">QTY.</th>
-										<th className="text-end fw-normal">Price</th>
-										<th className="text-end fw-normal">Total</th>
+										<tr>
+											<th className="fw-normal">Item Name</th>
+											<th className="text-end fw-normal">QTY.</th>
+											<th className="text-end fw-normal">Price</th>
+											<th className="text-end fw-normal">Total</th>
+										</tr>
 									</thead>
 									<tbody>
 										<tr>
@@ -217,7 +219,7 @@ export default function Invoice() {
 			{/* Offcanvas Edit Form */}
 			<div
 				className="offcanvas offcanvas-start"
-				tabindex="-1"
+				tabIndex="-1"
 				id="offcanvasEdit"
 				aria-labelledby="offcanvasLabel"
 			>
@@ -502,7 +504,7 @@ export default function Invoice() {
 			{/* Delete Modal */}
 			<button
 				type="button"
-				class="btn btn-primary d-none"
+				className="btn btn-primary d-none"
 				data-bs-toggle="modal"
 				data-bs-target="#deleteModal"
 				id="deleteModalBtn"
