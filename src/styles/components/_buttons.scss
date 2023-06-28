@@ -19,6 +19,16 @@
 	span {
 		margin-top: 2px;
 	}
+	&-sm {
+		gap: 1rem;
+		transition: gap 0.2s ease-in-out;
+		&:hover {
+			gap: 0.5rem;
+		}
+		svg {
+			font-size: 18px;
+		}
+	}
 }
 
 .btn-icon-only {

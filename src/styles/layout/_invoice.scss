@@ -1,0 +1,27 @@
+.invoice > .container {
+	padding-bottom: 120px;
+}
+
+@media (min-width: 768px) {
+	.invoice > .container {
+		padding-bottom: 0;
+	}
+}
+
+.mobile-price-rows {
+	.row:not(:last-child) {
+		margin-bottom: 1rem;
+	}
+}
+
+.item-list {
+	.quantity {
+		max-width: 90px;
+	}
+	.price {
+		max-width: 140px;
+	}
+	.total {
+		max-width: 160px;
+	}
+}

@@ -6,11 +6,7 @@ export default function NavBar() {
 	const { theme, toggleTheme } = useTheme();
 	return (
 		<div className="myNavBar text-info bg-secondary">
-			<img
-				className="img-fluid bg-primary rounded-end-4"
-				src={logo}
-				alt="logo"
-			/>
+			<img className="logo bg-primary rounded-end-4" src={logo} alt="logo" />
 			<div className="nav-btns">
 				<button
 					type="button"

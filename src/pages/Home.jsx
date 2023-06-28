@@ -184,7 +184,7 @@ export default function Home() {
 									</div>
 									<div className="col-4">
 										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-success border-0 text-center">
+										<div className="alert alert-status status alert-success border-0 text-center">
 											<BsFillCircleFill className="me-2" />
 											<span>Paid</span>
 										</div>
@@ -209,7 +209,7 @@ export default function Home() {
 												$ 1,800.90
 											</p>
 											<div>
-												<div className="alert alert-success border-0 text-center mb-0 flex-grow-1">
+												<div className="alert alert-status alert-success border-0 text-center mb-0 flex-grow-1">
 													<BsFillCircleFill className="me-2" />
 													<span>Paid</span>
 												</div>
@@ -238,7 +238,7 @@ export default function Home() {
 									</div>
 									<div className="col-4">
 										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-warning border-0 text-center">
+										<div className="alert alert-status alert-warning border-0 text-center">
 											<BsFillCircleFill className="me-2" />
 											<span>Pending</span>
 										</div>
@@ -263,7 +263,7 @@ export default function Home() {
 												$ 1,800.90
 											</p>
 											<div>
-												<div className="alert alert-warning border-0 text-center mb-0 flex-grow-1">
+												<div className="alert alert-status alert-warning border-0 text-center mb-0 flex-grow-1">
 													<BsFillCircleFill className="me-2" />
 													<span>Pending</span>
 												</div>
@@ -292,7 +292,7 @@ export default function Home() {
 									</div>
 									<div className="col-4">
 										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-secondary border-0 text-center">
+										<div className="alert alert-status alert-secondary border-0 text-center">
 											<BsFillCircleFill className="me-2" />
 											<span>Draft</span>
 										</div>
@@ -317,7 +317,7 @@ export default function Home() {
 												$ 1,800.90
 											</p>
 											<div>
-												<div className="alert alert-secondary border-0 text-center mb-0 flex-grow-1">
+												<div className="alert alert-status alert-secondary border-0 text-center mb-0 flex-grow-1">
 													<BsFillCircleFill className="me-2" />
 													<span>Draft</span>
 												</div>

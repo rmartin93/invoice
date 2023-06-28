@@ -25,7 +25,7 @@ $container-max-widths: (
 	md: 720px,
 	lg: 960px,
 	//   xl: 1140px,
-	//   xxl: 1320px,,,,,,,,,,,,,,,,
+	//   xxl: 1320px,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 // Allows for customizing button radius independently from global border radius
@@ -37,6 +37,8 @@ $btn-line-height: 15px;
 
 $btn-padding-y: 15px;
 $btn-padding-x: 24px;
+
+$offcanvas-horizontal-width: 100%;
 
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
@@ -66,19 +68,68 @@ $color-mode-type: data;
 		}
 	}
 
+	.offcanvas {
+		background-color: color.$dark;
+	}
+
 	.card {
 		color: color.$white;
 		background-color: color.$secondary;
 	}
+
+	.mobile-price-rows,
+	.price-table-wrapper {
+		background-color: #252945;
+	}
+
+	.dark-white {
+		color: color.$white !important;
+	}
 }
 @include color-mode(light) {
 	background-color: color.$light;
+	.mobile-price-rows,
+	.price-table-wrapper {
+		background-color: #f9fafe;
+	}
+}
+
+[data-bs-theme="light"] main {
+	background-color: color.$light;
+}
+
+[data-bs-theme="dark"] main {
+	background-color: color.$dark;
 }
 
 .text-secondaryOther {
 	color: color.$secondaryOther;
 }
 
+.text-secondaryAccent {
+	color: color.$secondaryAccent;
+}
+
 input[type="checkbox"] {
 	accent-color: color.$primary;
+}
+
+.bg-lightAccent {
+	background-color: color.$lightAccent;
+}
+
+.table > :not(caption) > * > * {
+	--bs-table-bg: transparent;
+}
+
+.offcanvas {
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+	border-color: none;
+}
+
+@media (min-width: 768px) {
+	.offcanvas.offcanvas-start {
+		width: 719px;
+	}
 }

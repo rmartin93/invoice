@@ -15,6 +15,15 @@ label {
 	}
 }
 
+.form-control:read-only {
+	border: 1px solid #dfe3fa45;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.readonly {
+	opacity: 0.5;
+}
+
 .filter-checkbox {
 	&:hover {
 		cursor: pointer;
@@ -22,6 +31,10 @@ label {
 	> * {
 		pointer-events: none;
 	}
+}
+
+input[type="number"] {
+	-moz-appearance: textfield;
 }
 
 // See bootstrap.scss for dark mode form styling
