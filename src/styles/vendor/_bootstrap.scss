@@ -25,7 +25,7 @@ $container-max-widths: (
 	md: 720px,
 	lg: 960px,
 	//   xl: 1140px,
-	//   xxl: 1320px,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+	//   xxl: 1320px,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 // Allows for customizing button radius independently from global border radius
@@ -59,12 +59,16 @@ $color-mode-type: data;
 
 	.form-control,
 	.form-select {
-		border: 1px solid color.$dark;
+		border: none;
 		background: color.$darkAccent;
 		color: color.$light;
 		&:focus {
 			border: none;
 			box-shadow: none;
+		}
+		&:read-only {
+			border: none;
+			color: color.$light;
 		}
 	}
 
@@ -94,6 +98,21 @@ $color-mode-type: data;
 			background-color: rgba(37, 41, 69, 0.8);
 			border-color: rgba(37, 41, 69, 0.8);
 		}
+	}
+	::placeholder {
+		/* Chrome, Firefox, Opera, Safari 10.1+ */
+		color: rgba(255, 255, 255, 0.4) !important;
+		opacity: 1; /* Firefox */
+	}
+
+	:-ms-input-placeholder {
+		/* Internet Explorer 10-11 */
+		color: rgba(255, 255, 255, 0.4) !important;
+	}
+
+	::-ms-input-placeholder {
+		/* Microsoft Edge */
+		color: rgba(255, 255, 255, 0.4) !important;
 	}
 }
 @include color-mode(light) {

@@ -8,6 +8,10 @@ export default function Invoice() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const editForm = useRef();
+	const handleDelete = () => {
+		const deleteBtn = document.getElementById("deleteModalBtn");
+		deleteBtn.click();
+	};
 	return (
 		<div className="invoice">
 			<section className="container">
@@ -19,7 +23,7 @@ export default function Invoice() {
 							onClick={() => navigate(-1)}
 						>
 							<BiSolidChevronLeft className="text-primary" />
-							<span class="dark-white">Go Back</span>
+							<span className="dark-white">Go Back</span>
 						</button>
 					</div>
 				</div>
@@ -59,7 +63,10 @@ export default function Invoice() {
 								>
 									<div>Edit</div>
 								</button>
-								<button className="btn btn-danger">
+								<button
+									className="btn btn-danger"
+									onClick={() => handleDelete()}
+								>
 									<div>Delete</div>
 								</button>
 								<button className="btn btn-primary">
@@ -74,7 +81,7 @@ export default function Invoice() {
 					<div className="card-body">
 						<div className="row justify-content-between">
 							<div className="col-12 col-md-6">
-								<p class="mb-0">
+								<p className="mb-0">
 									<span className="text-info fs-6">#</span>
 									<span className="ms-1 fw-bold fs-6">{id}</span>
 								</p>
@@ -198,7 +205,7 @@ export default function Invoice() {
 						>
 							<div>Edit</div>
 						</button>
-						<button className="btn btn-danger">
+						<button className="btn btn-danger" onClick={() => handleDelete()}>
 							<div>Delete</div>
 						</button>
 						<button className="btn btn-primary">
@@ -209,24 +216,24 @@ export default function Invoice() {
 			</section>
 			{/* Offcanvas Edit Form */}
 			<div
-				class="offcanvas offcanvas-start"
+				className="offcanvas offcanvas-start"
 				tabindex="-1"
 				id="offcanvasEdit"
 				aria-labelledby="offcanvasLabel"
 			>
-				<div class="offcanvas-header p-5 pb-4">
-					<h5 class="offcanvas-title dark-white" id="offcanvasLabel">
+				<div className="offcanvas-header p-5 pb-4">
+					<h5 className="offcanvas-title dark-white" id="offcanvasLabel">
 						Edit # {id}
 					</h5>
 					<button
 						type="button"
-						class="btn-close"
+						className="btn-close"
 						data-bs-dismiss="offcanvas"
 						aria-label="Close"
 					></button>
 				</div>
-				<div class="offcanvas-body p-5 pt-0">
-					<form useRef={editForm} style={{ paddingBottom: "6rem" }}>
+				<div className="offcanvas-body p-5 pt-0">
+					<form ref={editForm} style={{ paddingBottom: "6rem" }}>
 						<h6 className="text-primary mb-4">Bill From</h6>
 						<div className="mb-3">
 							<label className="ps-0" htmlFor="streetAddress">
@@ -247,7 +254,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="city"
 									placeholder="London"
 									name="fromCity"
@@ -259,7 +266,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="postCode"
 									placeholder="E1 7HP"
 									name="fromPostCode"
@@ -271,7 +278,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
 									name="fromCountry"
@@ -322,7 +329,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="city"
 									placeholder="Bradford"
 									name="clientCity"
@@ -334,7 +341,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="postCode"
 									placeholder="BD1 9PB"
 									name="clientPostCode"
@@ -346,7 +353,7 @@ export default function Invoice() {
 								</label>
 								<input
 									type="text"
-									class="form-control"
+									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
 									name="clientCountry"
@@ -391,6 +398,7 @@ export default function Invoice() {
 								/>
 							</div>
 						</div>
+						{/* Item List */}
 						<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
 						<div className="row item-list align-items-center gx-3">
 							<div className="col-12 col-md mb-3">
@@ -488,6 +496,41 @@ export default function Invoice() {
 							Cancel
 						</button>
 						<button className="btn btn-primary">Save Changes</button>
+					</div>
+				</div>
+			</div>
+			{/* Delete Modal */}
+			<button
+				type="button"
+				class="btn btn-primary d-none"
+				data-bs-toggle="modal"
+				data-bs-target="#deleteModal"
+				id="deleteModalBtn"
+			>
+				Launch demo modal
+			</button>
+			<div className="modal fade" tabIndex="-1" id="deleteModal">
+				<div className="modal-dialog modal-dialog-centered">
+					<div className="modal-content p-5">
+						<div className="modal-body">
+							<h3 className="fs-2">Confirm Deletion</h3>
+							<p className="text-secondaryOther">
+								Are you sure you want to delete invoice #{id}? This action
+								cannot be undone.
+							</p>
+						</div>
+						<div className="modal-footer border-0">
+							<button
+								type="button"
+								className="btn btn-light"
+								data-bs-dismiss="modal"
+							>
+								Close
+							</button>
+							<button type="button" className="btn btn-danger">
+								Delete
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

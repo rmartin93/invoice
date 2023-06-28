@@ -4,12 +4,14 @@ import {
 	BiSolidChevronUp,
 	BiSolidChevronRight,
 } from "react-icons/bi";
+import { FaTrash } from "react-icons/fa";
+import { HiPlus, HiPlusCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { HiPlusCircle } from "react-icons/hi";
 
 export default function Home() {
 	const temp = 0;
+	const editForm = useRef();
 	const dialog = useRef();
 	const [draft, setDraft] = useState(false);
 	const [pending, setPending] = useState(false);
@@ -61,7 +63,7 @@ export default function Home() {
 			<section className="invoice-list container">
 				<div className="row mb-3">
 					<div className="col-6">
-						<h1 className="mb-0">Invoices</h1>
+						<h1 className="mb-0 dark-white">Invoices</h1>
 						<p className="text-secondaryOther">Invoice Count</p>
 					</div>
 					<div className="col-6">
@@ -75,7 +77,7 @@ export default function Home() {
 									type="button"
 									onClick={() => showPopover()}
 								>
-									<span>Filter By Status</span>
+									<span className="dark-white mt-1">Filter By Status</span>
 									{chevron === "down" ? (
 										<BiSolidChevronDown className="ms-2 text-primary" />
 									) : (
@@ -91,8 +93,6 @@ export default function Home() {
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
 												setDraft(!draft);
-												setPending(false);
-												setPaid(false);
 											}}
 										>
 											<input
@@ -104,7 +104,7 @@ export default function Home() {
 											/>
 											<label
 												htmlFor="draft"
-												className="pb-0 fw-bolder ms-2 text-dark"
+												className="pb-0 fw-bolder ms-2 text-dark dark-white"
 												style={{ paddingTop: "2px" }}
 											>
 												Draft
@@ -114,8 +114,6 @@ export default function Home() {
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
 												setPending(!pending);
-												setDraft(false);
-												setPaid(false);
 											}}
 										>
 											<input
@@ -127,7 +125,7 @@ export default function Home() {
 											/>
 											<label
 												htmlFor="pending"
-												className="pb-0 fw-bolder ms-2 text-dark"
+												className="pb-0 fw-bolder ms-2 text-dark dark-white"
 												style={{ paddingTop: "2px" }}
 											>
 												Pending
@@ -137,8 +135,6 @@ export default function Home() {
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
 												setPaid(!paid);
-												setDraft(false);
-												setPending(false);
 											}}
 										>
 											<input
@@ -150,7 +146,7 @@ export default function Home() {
 											/>
 											<label
 												htmlFor="paid"
-												className="pb-0 fw-bolder ms-2 text-dark"
+												className="pb-0 fw-bolder ms-2 text-dark dark-white"
 												style={{ paddingTop: "2px" }}
 											>
 												Paid
@@ -160,7 +156,12 @@ export default function Home() {
 								</div>
 							</div>
 							<div>
-								<button className="btn btn-primary btn-icon">
+								<button
+									className="btn btn-primary btn-icon"
+									data-bs-toggle="offcanvas"
+									data-bs-target="#offcanvasCreate"
+									aria-controls="offcanvasCreate"
+								>
 									<HiPlusCircle className="me-2" />
 									<span>New Invoice</span>
 								</button>
@@ -331,6 +332,256 @@ export default function Home() {
 					</div>
 				</Link>
 			</section>
+			{/* Offcanvas Create Form */}
+			<div
+				class="offcanvas offcanvas-start"
+				tabindex="-1"
+				id="offcanvasCreate"
+				aria-labelledby="offcanvasLabel"
+			>
+				<div class="offcanvas-header p-5 pb-4">
+					<h5 class="offcanvas-title dark-white" id="offcanvasLabel">
+						New Invoice
+					</h5>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="offcanvas"
+						aria-label="Close"
+					></button>
+				</div>
+				<div class="offcanvas-body p-5 pt-0">
+					<form ref={editForm} style={{ paddingBottom: "6rem" }}>
+						<h6 className="text-primary mb-4">Bill From</h6>
+						<div className="mb-3">
+							<label className="ps-0" htmlFor="streetAddress">
+								Street Address
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								id="streetAddress"
+								placeholder="19 Union Terrace"
+								name="fromAddress"
+							/>
+						</div>
+						<div className="row">
+							<div className="col-6 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="city">
+									City
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="city"
+									placeholder="London"
+									name="fromCity"
+								/>
+							</div>
+							<div className="col-6 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="postCode">
+									Post Code
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="postCode"
+									placeholder="E1 7HP"
+									name="fromPostCode"
+								/>
+							</div>
+							<div className="col-12 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="country">
+									Country
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="country"
+									placeholder="United Kingdom"
+									name="fromCountry"
+								/>
+							</div>
+						</div>
+						<h6 className="text-primary my-4">Bill To</h6>
+						<div className="mb-3">
+							<label className="ps-0" htmlFor="name">
+								Client's Name
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								id="name"
+								placeholder="Alex Grim"
+								name="clientName"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className="ps-0" htmlFor="email">
+								Client's Email
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								id="email"
+								placeholder="alexgrim@mail.com"
+								name="clientEmail"
+							/>
+						</div>
+						<div className="mb-3">
+							<label className="ps-0" htmlFor="streetAddress">
+								Street Address
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								id="streetAddress"
+								placeholder="84 Church Way"
+								name="clientAddress"
+							/>
+						</div>
+						<div className="row">
+							<div className="col-6 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="city">
+									City
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="city"
+									placeholder="Bradford"
+									name="clientCity"
+								/>
+							</div>
+							<div className="col-6 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="postCode">
+									Post Code
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="postCode"
+									placeholder="BD1 9PB"
+									name="clientPostCode"
+								/>
+							</div>
+							<div className="col-12 col-md-4 mb-3">
+								<label className="ps-0" htmlFor="country">
+									United Kingdom
+								</label>
+								<input
+									type="text"
+									class="form-control"
+									id="country"
+									placeholder="United Kingdom"
+									name="clientCountry"
+								/>
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-12 col-md-6 mb-3">
+								<label className="readonly" htmlFor="invoiceDate">
+									Invoice Date
+								</label>
+								<input
+									className="form-control"
+									type="date"
+									id="invoiceDate"
+									name="invoiceDate"
+									value="2021-08-30"
+									readOnly
+								/>
+							</div>
+							<div className="col-12 col-md-6 mb-3">
+								<label htmlFor="paymentTerms">Payment Terms</label>
+								<select
+									className="form-select"
+									id="paymentTerms"
+									name="paymentTerms"
+								>
+									<option value="1">Net 1 Day</option>
+									<option value="7">Net 7 Days</option>
+									<option value="14">Net 14 Days</option>
+									<option value="30">Net 30 Days</option>
+								</select>
+							</div>
+							<div className="col-12 mb-3">
+								<label htmlFor="projectDescription">Project Description</label>
+								<input
+									className="form-control"
+									type="text"
+									id="projectDescription"
+									name="projectDescription"
+									placeholder="e.g. Graphic Design Service"
+								/>
+							</div>
+						</div>
+						{/* Item List */}
+						<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
+						<div className="row item-list align-items-center gx-3">
+							<div className="col-12 col-md mb-3">
+								<label htmlFor="itemName">Item Name</label>
+								<input
+									type="text"
+									className="form-control"
+									id="itemName"
+									name="itemName"
+								/>
+							</div>
+							<div className="col mb-3 quantity">
+								<label htmlFor="itemQuantity">Qty.</label>
+								<input
+									type="number"
+									className="form-control"
+									id="itemQuantity"
+									name="itemQuantity"
+								/>
+							</div>
+							<div className="col mb-3 price">
+								<label htmlFor="itemPrice">Price</label>
+								<input
+									type="number"
+									className="form-control"
+									id="itemPrice"
+									name="itemPrice"
+								/>
+							</div>
+							<div className="col mb-3 total">
+								<label htmlFor="itemTotal">Total</label>
+								<div className="d-flex justify-content-between align-items-center gap-2">
+									<span className="fw-bold text-info fs-6">$0.00</span>
+									<button className="btn btn-link btn-icon text-info pe-1 ms-3">
+										<FaTrash className="delete-item fs-6" />
+									</button>
+								</div>
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-12">
+								<button className="btn btn-light btn-icon-2 w-100">
+									<HiPlus className="me-2" />
+									<div>Add New Item</div>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div className="card border-0 position-absolute bottom-0 start-0 w-100">
+					<div className="card-body d-flex gap-3 justify-content-between align-items-center p-4 shadow-lg overflow-auto rounded-end-4">
+						<button
+							className="btn btn-light"
+							data-bs-dismiss="offcanvas"
+							aria-label="Close"
+						>
+							Discard
+						</button>
+						<div className="d-flex gap-3 justify-content-end">
+							<button className="btn btn-dark">Save as Draft</button>
+							<button className="btn btn-primary">Save & Send</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
