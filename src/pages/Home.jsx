@@ -12,8 +12,9 @@ import { supabase } from "../database/supabaseClient";
 import utils from "../helpers/Utils";
 
 export default function Home({ session }) {
-	const editForm = useRef();
+	const createForm = useRef();
 	const dialog = useRef();
+	const [createPending, setCreatePending] = useState(false);
 	const [invoicesPending, setInvoicesPending] = useState(false);
 	const [invoices, setInvoices] = useState([]);
 	const [draft, setDraft] = useState(false);
@@ -58,6 +59,60 @@ export default function Home({ session }) {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+
+	const handleCreate = async (status) => {
+		setCreatePending(true);
+		const formData = new FormData(createForm.current);
+		const formObj = Object.fromEntries(formData);
+		console.log("formObj", {
+			total: formObj.total ? "" : 0,
+			items: [],
+			created_at: new Date(),
+			payment_due: formObj.payment_due,
+			description: formObj.description,
+			payment_terms: formObj.payment_terms,
+			client_name: formObj.client_name,
+			client_email: formObj.client_email,
+			status: status,
+			sender_street: formObj.sender_street,
+			sender_post_code: formObj.sender_post_code,
+			sender_city: formObj.sender_city,
+			sender_country: formObj.sender_country,
+			client_street: formObj.client_street,
+			client_city: formObj.client_city,
+			client_post_code: formObj.client_post_code,
+			client_country: formObj.client_country,
+			user_id: session.user.id,
+		});
+		const { data: invoice, error } = await supabase.from("invoices").insert([
+			{
+				total: formObj.total ? "" : 0,
+				items: [],
+				created_at: new Date(),
+				payment_due: formObj.payment_due,
+				description: formObj.description,
+				payment_terms: formObj.payment_terms,
+				client_name: formObj.client_name,
+				client_email: formObj.client_email,
+				status: status,
+				sender_street: formObj.sender_street,
+				sender_post_code: formObj.sender_post_code,
+				sender_city: formObj.sender_city,
+				sender_country: formObj.sender_country,
+				client_street: formObj.client_street,
+				client_city: formObj.client_city,
+				client_post_code: formObj.client_post_code,
+				client_country: formObj.client_country,
+				user_id: session.user.id,
+			},
+		]);
+		if (error) {
+			console.log(error);
+			setCreatePending(false);
+		}
+		setCreatePending(false);
+		console.log("invoice", invoice);
+	};
 
 	if (invoicesPending) {
 		return (
@@ -207,7 +262,6 @@ export default function Home({ session }) {
 					</div>
 				</div>
 				{invoices.map((invoice) => {
-					console.log("invoice: ", invoice);
 					return (
 						<Link
 							to={`/invoice/${invoice.id}`}
@@ -321,7 +375,7 @@ export default function Home({ session }) {
 					></button>
 				</div>
 				<div className="offcanvas-body p-5 pt-0">
-					<form ref={editForm} style={{ paddingBottom: "6rem" }}>
+					<form ref={createForm} style={{ paddingBottom: "6rem" }}>
 						<h6 className="text-primary mb-4">Bill From</h6>
 						<div className="mb-3">
 							<label className="ps-0" htmlFor="streetAddress">
@@ -332,7 +386,7 @@ export default function Home({ session }) {
 								className="form-control"
 								id="streetAddress"
 								placeholder="19 Union Terrace"
-								name="fromAddress"
+								name="sender_street"
 							/>
 						</div>
 						<div className="row">
@@ -345,7 +399,7 @@ export default function Home({ session }) {
 									className="form-control"
 									id="city"
 									placeholder="London"
-									name="fromCity"
+									name="sender_city"
 								/>
 							</div>
 							<div className="col-6 col-md-4 mb-3">
@@ -357,7 +411,7 @@ export default function Home({ session }) {
 									className="form-control"
 									id="postCode"
 									placeholder="E1 7HP"
-									name="fromPostCode"
+									name="sender_post_code"
 								/>
 							</div>
 							<div className="col-12 col-md-4 mb-3">
@@ -369,7 +423,7 @@ export default function Home({ session }) {
 									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
-									name="fromCountry"
+									name="sender_country"
 								/>
 							</div>
 						</div>
@@ -383,7 +437,7 @@ export default function Home({ session }) {
 								className="form-control"
 								id="name"
 								placeholder="Alex Grim"
-								name="clientName"
+								name="client_name"
 							/>
 						</div>
 						<div className="mb-3">
@@ -395,7 +449,7 @@ export default function Home({ session }) {
 								className="form-control"
 								id="email"
 								placeholder="alexgrim@mail.com"
-								name="clientEmail"
+								name="client_email"
 							/>
 						</div>
 						<div className="mb-3">
@@ -407,7 +461,7 @@ export default function Home({ session }) {
 								className="form-control"
 								id="streetAddress"
 								placeholder="84 Church Way"
-								name="clientAddress"
+								name="client_street"
 							/>
 						</div>
 						<div className="row">
@@ -420,7 +474,7 @@ export default function Home({ session }) {
 									className="form-control"
 									id="city"
 									placeholder="Bradford"
-									name="clientCity"
+									name="client_city"
 								/>
 							</div>
 							<div className="col-6 col-md-4 mb-3">
@@ -432,34 +486,30 @@ export default function Home({ session }) {
 									className="form-control"
 									id="postCode"
 									placeholder="BD1 9PB"
-									name="clientPostCode"
+									name="client_post_code"
 								/>
 							</div>
 							<div className="col-12 col-md-4 mb-3">
 								<label className="ps-0" htmlFor="country">
-									United Kingdom
+									Country
 								</label>
 								<input
 									type="text"
 									className="form-control"
 									id="country"
 									placeholder="United Kingdom"
-									name="clientCountry"
+									name="client_country"
 								/>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-12 col-md-6 mb-3">
-								<label className="readonly" htmlFor="invoiceDate">
-									Invoice Date
-								</label>
+								<label htmlFor="invoiceDate">Invoice Date</label>
 								<input
 									className="form-control"
 									type="date"
 									id="invoiceDate"
-									name="invoiceDate"
-									value="2021-08-30"
-									readOnly
+									name="payment_due"
 								/>
 							</div>
 							<div className="col-12 col-md-6 mb-3">
@@ -467,12 +517,12 @@ export default function Home({ session }) {
 								<select
 									className="form-select"
 									id="paymentTerms"
-									name="paymentTerms"
+									name="payment_terms"
 								>
-									<option value="1">Net 1 Day</option>
-									<option value="7">Net 7 Days</option>
-									<option value="14">Net 14 Days</option>
-									<option value="30">Net 30 Days</option>
+									<option value="Net 1 Day">Net 1 Day</option>
+									<option value="Net 7 Days">Net 7 Days</option>
+									<option value="Net 14 Days">Net 14 Days</option>
+									<option value="Net 30 Days">Net 30 Days</option>
 								</select>
 							</div>
 							<div className="col-12 mb-3">
@@ -481,7 +531,7 @@ export default function Home({ session }) {
 									className="form-control"
 									type="text"
 									id="projectDescription"
-									name="projectDescription"
+									name="description"
 									placeholder="e.g. Graphic Design Service"
 								/>
 							</div>
@@ -495,7 +545,7 @@ export default function Home({ session }) {
 									type="text"
 									className="form-control"
 									id="itemName"
-									name="itemName"
+									name="name"
 								/>
 							</div>
 							<div className="col mb-3 quantity">
@@ -504,7 +554,7 @@ export default function Home({ session }) {
 									type="number"
 									className="form-control"
 									id="itemQuantity"
-									name="itemQuantity"
+									name="quantity"
 								/>
 							</div>
 							<div className="col mb-3 price">
@@ -513,13 +563,16 @@ export default function Home({ session }) {
 									type="number"
 									className="form-control"
 									id="itemPrice"
-									name="itemPrice"
+									name="price"
 								/>
 							</div>
 							<div className="col mb-3 total">
 								<label htmlFor="itemTotal">Total</label>
 								<div className="d-flex justify-content-between align-items-center gap-2">
-									<span className="fw-bold text-info fs-6">$0.00</span>
+									<input
+										className="form-control fw-bold text-info fs-6 border-0"
+										name="total"
+									/>
 									<button className="btn btn-link btn-icon text-info pe-1 ms-3">
 										<FaTrash className="delete-item fs-6" />
 									</button>
@@ -547,7 +600,21 @@ export default function Home({ session }) {
 						</button>
 						<div className="d-flex gap-3 justify-content-end">
 							<button className="btn btn-dark">Save as Draft</button>
-							<button className="btn btn-primary">Save & Send</button>
+							<button
+								className="btn btn-primary"
+								onClick={() => handleCreate("pending")}
+								{...(createPending && "disabled")}
+							>
+								{createPending && (
+									<div
+										className="spinner-border spinner-border-sm me-2"
+										role="status"
+									>
+										<span className="visually-hidden">Loading...</span>
+									</div>
+								)}
+								Save & Send
+							</button>
 						</div>
 					</div>
 				</div>
