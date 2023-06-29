@@ -30,7 +30,7 @@ function App() {
 				<NavBar />
 				<main>
 					<Routes>
-						<Route path="/" element={<Home />} />
+						<Route path="/" element={<Home session={session} />} />
 						<Route path="/invoice/:id" element={<Invoice />} />
 						<Route path="/login" element={<Login />} />
 					</Routes>

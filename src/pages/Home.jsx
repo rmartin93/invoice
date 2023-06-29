@@ -9,16 +9,18 @@ import { HiPlus, HiPlusCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../database/supabaseClient";
+import utils from "../helpers/Utils";
 
-export default function Home() {
-	const temp = 0;
-	const [countries, setCountries] = useState([]);
+export default function Home({ session }) {
 	const editForm = useRef();
 	const dialog = useRef();
+	const [invoicesPending, setInvoicesPending] = useState(false);
+	const [invoices, setInvoices] = useState([]);
 	const [draft, setDraft] = useState(false);
 	const [pending, setPending] = useState(false);
 	const [paid, setPaid] = useState(false);
 	const [chevron, setChevron] = useState("down");
+
 	const showPopover = () => {
 		dialog.current.classList.toggle("d-none");
 		chevron === "down" ? setChevron("up") : setChevron("down");
@@ -35,19 +37,43 @@ export default function Home() {
 	};
 	// add event listener to handle click outside
 	useEffect(() => {
-		getCountries();
+		// get invoices for the logged in user (user id is stored in session)
+		const getInvoices = async () => {
+			setInvoicesPending(true);
+			const { data: invoices, error } = await supabase
+				.from("invoices")
+				.select("*")
+				.eq("user_id", session.user.id);
+			if (error) {
+				console.log(error);
+				setInvoicesPending(false);
+			}
+			setInvoicesPending(false);
+			setInvoices(invoices);
+			// console.log("invoices", invoices);
+		};
+		getInvoices();
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
 
-	async function getCountries() {
-		const { data } = await supabase.from("countries").select();
-		setCountries(data);
+	if (invoicesPending) {
+		return (
+			<section
+				className="container d-flex flex-column justify-content-center align-items-center h-100 text-primary"
+				style={{ marginTop: "-90px" }}
+			>
+				<div className="spinner-border me-4" role="status">
+					<span className="visually-hidden">Loading...</span>
+				</div>
+				<h3 className="fs-3 mb-0 mt-4">Loading Invoices</h3>
+			</section>
+		);
 	}
-	console.log("countries", countries);
-	if (temp === 1) {
+
+	if (invoices.length === 0 && !invoicesPending) {
 		return (
 			<div className="empty-invoices">
 				<section className="container">
@@ -73,7 +99,9 @@ export default function Home() {
 				<div className="row mb-3">
 					<div className="col-6">
 						<h1 className="mb-0 dark-white">Invoices</h1>
-						<p className="text-secondaryOther">Invoice Count</p>
+						<p className="text-secondaryOther">
+							There are {invoices.length} total invoices
+						</p>
 					</div>
 					<div className="col-6">
 						<div className="d-flex justify-content-end align-items-center">
@@ -178,168 +206,101 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-				<Link to="/invoice/3" className="row mb-3 invoice-row">
-					<div className="col-12">
-						<div className="card border-0 shadow-sm rounded-4">
-							<div className="card-body">
-								{/* id, date, name, amt, status, icon (med and up) */}
-								<div className="row d-md-none">
-									<div className="col-8">
-										<p className="mb-3">
-											<span className="text-info fs-6">#</span>
-											<span className="ms-1 fw-bold fs-6">RT3080</span>
-										</p>
-										<p className="text-info mb-2">Due 19 Aug 2021</p>
-										<p className="fw-bold fs-6">$ 1,800.90</p>
-									</div>
-									<div className="col-4">
-										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-status status alert-success border-0 text-center">
-											<BsFillCircleFill className="me-2" />
-											<span>Paid</span>
-										</div>
-									</div>
-								</div>
-								<div className="row d-none d-md-flex align-items-center justify-content-between">
-									<div className="col-6">
-										<div className="d-flex">
-											<p className="mb-0 flex-grow-1">
-												<span className="text-info fs-6">#</span>
-												<span className="ms-1 fw-bold fs-6">RT3080</span>
-											</p>
-											<p className="text-info mb-0 flex-grow-1">
-												Due 19 Aug 2021
-											</p>
-											<p className="text-info mb-0 flex-grow-1">Jensen Huang</p>
-										</div>
-									</div>
-									<div className="col-6">
-										<div className="d-flex align-items-center gap-4">
-											<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
-												$ 1,800.90
-											</p>
-											<div>
-												<div className="alert alert-status alert-success border-0 text-center mb-0 flex-grow-1">
+				{invoices.map((invoice) => {
+					console.log("invoice: ", invoice);
+					return (
+						<Link
+							to={`/invoice/${invoice.id}`}
+							className="row mb-3 invoice-row"
+							key={invoice.id}
+						>
+							<div className="col-12">
+								<div className="card border-0 shadow-sm rounded-4">
+									<div className="card-body">
+										{/* id, date, name, amt, status, icon (med and up) */}
+										<div className="row d-md-none">
+											<div className="col-8">
+												<p className="mb-3">
+													<span className="text-info fs-6">#</span>
+													<span className="ms-1 fw-bold fs-6">
+														{utils.reduceString(invoice.id)}
+													</span>
+												</p>
+												<p className="text-info mb-2">
+													Due {invoice.payment_due}
+												</p>
+												<p className="fw-bold fs-6 mb-0">
+													$ {utils.numberWithCommas(invoice.total)}
+												</p>
+											</div>
+											<div className="col-4 d-flex flex-column align-items-end">
+												<p className="text-info text-end">
+													{invoice.client_name}
+												</p>
+												<div
+													className={`alert alert-status status border-0 text-center mb-0 alert-${
+														invoice.status === "draft"
+															? "secondary"
+															: invoice.status === "pending"
+															? "warning"
+															: "success"
+													}`}
+												>
 													<BsFillCircleFill className="me-2" />
-													<span>Paid</span>
+													<span>
+														{utils.capitalizeFirstLetter(invoice.status)}
+													</span>
 												</div>
 											</div>
-											<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
+										</div>
+										<div className="row d-none d-md-flex align-items-center justify-content-between">
+											<div className="col-6">
+												<div className="d-flex">
+													<p className="mb-0 flex-grow-1">
+														<span className="text-info fs-6">#</span>
+														<span className="ms-1 fw-bold fs-6">
+															{utils.reduceString(invoice.id)}
+														</span>
+													</p>
+													<p className="text-info mb-0 flex-grow-1">
+														Due {invoice.payment_due}
+													</p>
+													<p className="text-info mb-0 flex-grow-1">
+														{invoice.client_name}
+													</p>
+												</div>
+											</div>
+											<div className="col-6">
+												<div className="d-flex align-items-center gap-4">
+													<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
+														$ {utils.numberWithCommas(invoice.total)}
+													</p>
+													<div>
+														<div
+															className={`alert alert-status status border-0 text-center mb-0 alert-${
+																invoice.status === "draft"
+																	? "secondary"
+																	: invoice.status === "pending"
+																	? "warning"
+																	: "success"
+															}`}
+														>
+															<BsFillCircleFill className="me-2" />
+															<span>
+																{utils.capitalizeFirstLetter(invoice.status)}
+															</span>
+														</div>
+													</div>
+													<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-				</Link>
-				<Link to="/invoice/4" className="row mb-3 invoice-row">
-					<div className="col-12">
-						<div className="card border-0 shadow-sm rounded-4">
-							<div className="card-body">
-								{/* id, date, name, amt, status, icon (med and up) */}
-								<div className="row d-md-none">
-									<div className="col-8">
-										<p className="mb-3">
-											<span className="text-info fs-6">#</span>
-											<span className="ms-1 fw-bold fs-6">RT3080</span>
-										</p>
-										<p className="text-info mb-2">Due 19 Aug 2021</p>
-										<p className="fw-bold fs-6">$ 1,800.90</p>
-									</div>
-									<div className="col-4">
-										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-status alert-warning border-0 text-center">
-											<BsFillCircleFill className="me-2" />
-											<span>Pending</span>
-										</div>
-									</div>
-								</div>
-								<div className="row d-none d-md-flex align-items-center justify-content-between">
-									<div className="col-6">
-										<div className="d-flex">
-											<p className="mb-0 flex-grow-1">
-												<span className="text-info fs-6">#</span>
-												<span className="ms-1 fw-bold fs-6">RT3080</span>
-											</p>
-											<p className="text-info mb-0 flex-grow-1">
-												Due 19 Aug 2021
-											</p>
-											<p className="text-info mb-0 flex-grow-1">Jensen Huang</p>
-										</div>
-									</div>
-									<div className="col-6">
-										<div className="d-flex align-items-center gap-4">
-											<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
-												$ 1,800.90
-											</p>
-											<div>
-												<div className="alert alert-status alert-warning border-0 text-center mb-0 flex-grow-1">
-													<BsFillCircleFill className="me-2" />
-													<span>Pending</span>
-												</div>
-											</div>
-											<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</Link>
-				<Link to="/invoice/5" className="row mb-3 invoice-row">
-					<div className="col-12">
-						<div className="card border-0 shadow-sm rounded-4">
-							<div className="card-body">
-								{/* id, date, name, amt, status, icon (med and up) */}
-								<div className="row d-md-none">
-									<div className="col-8">
-										<p className="mb-3">
-											<span className="text-info fs-6">#</span>
-											<span className="ms-1 fw-bold fs-6">RT3080</span>
-										</p>
-										<p className="text-info mb-2">Due 19 Aug 2021</p>
-										<p className="fw-bold fs-6">$ 1,800.90</p>
-									</div>
-									<div className="col-4">
-										<p className="text-info text-end">Jensen Huang</p>
-										<div className="alert alert-status alert-secondary border-0 text-center">
-											<BsFillCircleFill className="me-2" />
-											<span>Draft</span>
-										</div>
-									</div>
-								</div>
-								<div className="row d-none d-md-flex align-items-center justify-content-between">
-									<div className="col-6">
-										<div className="d-flex">
-											<p className="mb-0 flex-grow-1">
-												<span className="text-info fs-6">#</span>
-												<span className="ms-1 fw-bold fs-6">RT3080</span>
-											</p>
-											<p className="text-info mb-0 flex-grow-1">
-												Due 19 Aug 2021
-											</p>
-											<p className="text-info mb-0 flex-grow-1">Jensen Huang</p>
-										</div>
-									</div>
-									<div className="col-6">
-										<div className="d-flex align-items-center gap-4">
-											<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
-												$ 1,800.90
-											</p>
-											<div>
-												<div className="alert alert-status alert-secondary border-0 text-center mb-0 flex-grow-1">
-													<BsFillCircleFill className="me-2" />
-													<span>Draft</span>
-												</div>
-											</div>
-											<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</Link>
+						</Link>
+					);
+				})}
 			</section>
 			{/* Offcanvas Create Form */}
 			<div
