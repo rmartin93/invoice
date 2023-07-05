@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 # DB Password: 8$HjjE8NWoKYO8X$
+
+.env
