@@ -3,16 +3,20 @@ import { FaTrash } from "react-icons/fa";
 import { HiPlus } from "react-icons/hi";
 import utils from "../helpers/Utils";
 
-export default function ItemList() {
-	const [items, setItems] = useState([0, 1]);
-	const handleAdd = (e) => {
-		e.preventDefault();
-		// Make new item sum of all items + 1
-		const newItem = items.reduce((a, b) => a + b, 0) + 1;
+export default function ItemList({ defaultItems }) {
+	const [items, setItems] = useState(defaultItems);
+	const handleAdd = () => {
+		const newItem = {
+			id: utils.randomNumber(1, 1000000),
+			name: "",
+			quantity: 0,
+			price: 0,
+			total: 0,
+		};
 		setItems([...items, newItem]);
 	};
-	const handleDelete = (index) => {
-		setItems(items.filter((item) => item !== index));
+	const handleDelete = (itemToDelete) => {
+		setItems(items.filter((item) => item !== itemToDelete));
 	};
 	const calcTotal = (index) => {
 		const quantity = document.getElementsByName(`quantity`)[index].value;
@@ -24,7 +28,7 @@ export default function ItemList() {
 		<>
 			{items.map((item, index) => {
 				return (
-					<div className="item" key={item}>
+					<div className="item" key={index}>
 						<div className="row item-list align-items-center gx-3">
 							<div className="col-12 col-md mb-3">
 								<label htmlFor="itemName">Item Name</label>
@@ -33,6 +37,7 @@ export default function ItemList() {
 									className="form-control"
 									id="itemName"
 									name="name"
+									defaultValue={item.name}
 								/>
 							</div>
 							<div className="col mb-3 quantity">
@@ -42,6 +47,7 @@ export default function ItemList() {
 									className="form-control"
 									id="itemQuantity"
 									name="quantity"
+									defaultValue={item.quantity}
 									onChange={() => {
 										{
 											calcTotal(index);
@@ -56,6 +62,7 @@ export default function ItemList() {
 									className="form-control"
 									id="itemPrice"
 									name="price"
+									defaultValue={item.price}
 									onChange={() => {
 										{
 											calcTotal(index);
@@ -69,11 +76,13 @@ export default function ItemList() {
 									<input
 										className="form-control fw-bold text-info fs-6 border-0"
 										name="total"
+										defaultValue={item.total}
 										readOnly
 									/>
 									<button
 										className="btn btn-link btn-icon text-info pe-1 ms-3"
-										onClick={() => handleDelete(index)}
+										type="button"
+										onClick={() => handleDelete(item)}
 									>
 										<FaTrash className="delete-item fs-6" />
 									</button>
@@ -87,7 +96,8 @@ export default function ItemList() {
 				<div className="col-12">
 					<button
 						className="btn btn-light btn-icon-2 w-100"
-						onClick={(e) => handleAdd(e)}
+						type="button"
+						onClick={(e) => handleAdd()}
 					>
 						<HiPlus className="me-2" />
 						<div>Add New Item</div>

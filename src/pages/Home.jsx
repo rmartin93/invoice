@@ -538,7 +538,17 @@ export default function Home({ session }) {
 						</div>
 						{/* Item List */}
 						<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
-						<ItemList />
+						<ItemList
+							defaultItems={[
+								{
+									id: 0,
+									name: "",
+									quantity: 0,
+									price: 0,
+									total: 0,
+								},
+							]}
+						/>
 					</form>
 				</div>
 				<div className="card border-0 position-absolute bottom-0 start-0 w-100">
