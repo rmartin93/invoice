@@ -4,12 +4,12 @@ import {
 	BiSolidChevronUp,
 	BiSolidChevronRight,
 } from "react-icons/bi";
-import { FaTrash } from "react-icons/fa";
-import { HiPlus, HiPlusCircle } from "react-icons/hi";
+import { HiPlusCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../database/supabaseClient";
 import utils from "../helpers/Utils";
+import ItemList from "../components/ItemList";
 
 export default function Home({ session }) {
 	const createForm = useRef();
@@ -538,55 +538,7 @@ export default function Home({ session }) {
 						</div>
 						{/* Item List */}
 						<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
-						<div className="row item-list align-items-center gx-3">
-							<div className="col-12 col-md mb-3">
-								<label htmlFor="itemName">Item Name</label>
-								<input
-									type="text"
-									className="form-control"
-									id="itemName"
-									name="name"
-								/>
-							</div>
-							<div className="col mb-3 quantity">
-								<label htmlFor="itemQuantity">Qty.</label>
-								<input
-									type="number"
-									className="form-control"
-									id="itemQuantity"
-									name="quantity"
-								/>
-							</div>
-							<div className="col mb-3 price">
-								<label htmlFor="itemPrice">Price</label>
-								<input
-									type="number"
-									className="form-control"
-									id="itemPrice"
-									name="price"
-								/>
-							</div>
-							<div className="col mb-3 total">
-								<label htmlFor="itemTotal">Total</label>
-								<div className="d-flex justify-content-between align-items-center gap-2">
-									<input
-										className="form-control fw-bold text-info fs-6 border-0"
-										name="total"
-									/>
-									<button className="btn btn-link btn-icon text-info pe-1 ms-3">
-										<FaTrash className="delete-item fs-6" />
-									</button>
-								</div>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-12">
-								<button className="btn btn-light btn-icon-2 w-100">
-									<HiPlus className="me-2" />
-									<div>Add New Item</div>
-								</button>
-							</div>
-						</div>
+						<ItemList />
 					</form>
 				</div>
 				<div className="card border-0 position-absolute bottom-0 start-0 w-100">

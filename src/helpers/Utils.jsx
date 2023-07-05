@@ -17,4 +17,8 @@ utils.reduceString = (string) => {
 	return "..." + string.slice(-5);
 };
 
+utils.randomNumber = (min, max) => {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 export default utils;
