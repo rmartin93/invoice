@@ -66,3 +66,9 @@
 		color: color.$dark;
 	}
 }
+
+button:focus,
+button:focus-visible {
+	outline: none;
+	box-shadow: none !important;
+}

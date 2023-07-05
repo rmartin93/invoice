@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { HiPlus } from "react-icons/hi";
 import utils from "../helpers/Utils";
 
-export default function ItemList({ defaultItems }) {
-	const [items, setItems] = useState(defaultItems);
+export default function ItemList({ items, setItems }) {
 	const handleAdd = () => {
 		const newItem = {
 			id: utils.randomNumber(1, 1000000),
@@ -16,7 +14,8 @@ export default function ItemList({ defaultItems }) {
 		setItems([...items, newItem]);
 	};
 	const handleDelete = (itemToDelete) => {
-		setItems(items.filter((item) => item !== itemToDelete));
+		const newItems = items.filter((item) => item.id !== itemToDelete.id);
+		setItems(newItems);
 	};
 	const calcTotal = (index) => {
 		const quantity = document.getElementsByName(`quantity`)[index].value;
@@ -28,7 +27,7 @@ export default function ItemList({ defaultItems }) {
 		<>
 			{items.map((item, index) => {
 				return (
-					<div className="item" key={index}>
+					<div className="item" key={item.id}>
 						<div className="row item-list align-items-center gx-3">
 							<div className="col-12 col-md mb-3">
 								<label htmlFor="itemName">Item Name</label>
@@ -38,6 +37,11 @@ export default function ItemList({ defaultItems }) {
 									id="itemName"
 									name="name"
 									defaultValue={item.name}
+									onChange={(e) => {
+										const newItems = [...items];
+										newItems[index].name = e.target.value;
+										setItems(newItems);
+									}}
 								/>
 							</div>
 							<div className="col mb-3 quantity">
@@ -48,10 +52,11 @@ export default function ItemList({ defaultItems }) {
 									id="itemQuantity"
 									name="quantity"
 									defaultValue={item.quantity}
-									onChange={() => {
-										{
-											calcTotal(index);
-										}
+									onChange={(e) => {
+										const newItems = [...items];
+										newItems[index].quantity = e.target.value;
+										setItems(newItems);
+										calcTotal(index);
 									}}
 								/>
 							</div>
@@ -63,10 +68,11 @@ export default function ItemList({ defaultItems }) {
 									id="itemPrice"
 									name="price"
 									defaultValue={item.price}
-									onChange={() => {
-										{
-											calcTotal(index);
-										}
+									onChange={(e) => {
+										const newItems = [...items];
+										newItems[index].price = e.target.value;
+										setItems(newItems);
+										calcTotal(index);
 									}}
 								/>
 							</div>

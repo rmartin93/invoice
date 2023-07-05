@@ -1,16 +1,31 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { BiSolidChevronLeft } from "react-icons/bi";
 import { BsFillCircleFill } from "react-icons/bs";
 import { HiPlus } from "react-icons/hi";
 import { FaTrash } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
+import { supabase } from "../database/supabaseClient";
 export default function Invoice() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const editForm = useRef();
+	const [deletePending, setDeletePending] = useState(false);
 	const handleDelete = () => {
 		const deleteBtn = document.getElementById("deleteModalBtn");
 		deleteBtn.click();
+	};
+	const deleteInvoice = async () => {
+		setDeletePending(true);
+		try {
+			await supabase.from("invoices").delete().eq("id", id);
+			setDeletePending(false);
+			document.getElementById("deleteModalCloseBtn").click();
+			navigate("/");
+		} catch (error) {
+			console.log("error", error);
+			document.getElementById("deleteModalCloseBtn").click();
+			setDeletePending(false);
+		}
 	};
 	return (
 		<div className="invoice">
@@ -207,7 +222,11 @@ export default function Invoice() {
 						>
 							<div>Edit</div>
 						</button>
-						<button className="btn btn-danger" onClick={() => handleDelete()}>
+						<button
+							className="btn btn-danger"
+							type="button"
+							onClick={() => handleDelete()}
+						>
 							<div>Delete</div>
 						</button>
 						<button className="btn btn-primary">
@@ -517,8 +536,7 @@ export default function Invoice() {
 						<div className="modal-body">
 							<h3 className="fs-2">Confirm Deletion</h3>
 							<p className="text-secondaryOther">
-								Are you sure you want to delete invoice #{id}? This action
-								cannot be undone.
+								Are you sure you want to delete this invoice?
 							</p>
 						</div>
 						<div className="modal-footer border-0">
@@ -526,11 +544,24 @@ export default function Invoice() {
 								type="button"
 								className="btn btn-light"
 								data-bs-dismiss="modal"
+								id="deleteModalCloseBtn"
 							>
 								Close
 							</button>
-							<button type="button" className="btn btn-danger">
-								Delete
+							<button
+								type="button"
+								className="btn btn-danger"
+								onClick={() => deleteInvoice()}
+							>
+								{deletePending && (
+									<div
+										className="spinner-border spinner-border-sm me-2"
+										role="status"
+									>
+										<span className="visually-hidden">Loading...</span>
+									</div>
+								)}
+								<span>Delete</span>
 							</button>
 						</div>
 					</div>

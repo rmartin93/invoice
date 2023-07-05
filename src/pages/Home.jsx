@@ -21,6 +21,15 @@ export default function Home({ session }) {
 	const [pending, setPending] = useState(false);
 	const [paid, setPaid] = useState(false);
 	const [chevron, setChevron] = useState("down");
+	const [items, setItems] = useState([
+		{
+			id: utils.randomNumber(0, 1000000),
+			name: "",
+			quantity: 0,
+			price: 0,
+			total: 0,
+		},
+	]);
 
 	const showPopover = () => {
 		dialog.current.classList.toggle("d-none");
@@ -36,23 +45,22 @@ export default function Home({ session }) {
 			chevron === "up" ? setChevron("up") : setChevron("down");
 		}
 	};
+	// get invoices for the logged in user (user id is stored in session)
+	const getInvoices = async () => {
+		setInvoicesPending(true);
+		const { data: invoices, error } = await supabase
+			.from("invoices")
+			.select("*")
+			.eq("user_id", session.user.id);
+		if (error) {
+			console.log(error);
+			setInvoicesPending(false);
+		}
+		setInvoicesPending(false);
+		setInvoices(invoices);
+	};
 	// add event listener to handle click outside
 	useEffect(() => {
-		// get invoices for the logged in user (user id is stored in session)
-		const getInvoices = async () => {
-			setInvoicesPending(true);
-			const { data: invoices, error } = await supabase
-				.from("invoices")
-				.select("*")
-				.eq("user_id", session.user.id);
-			if (error) {
-				console.log(error);
-				setInvoicesPending(false);
-			}
-			setInvoicesPending(false);
-			setInvoices(invoices);
-			// console.log("invoices", invoices);
-		};
 		getInvoices();
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
@@ -60,34 +68,22 @@ export default function Home({ session }) {
 		};
 	}, []);
 
+	const calcTotal = () => {
+		let total = 0;
+		items.forEach((item) => {
+			total += item.total;
+		});
+		return total;
+	};
+
 	const handleCreate = async (status) => {
 		setCreatePending(true);
 		const formData = new FormData(createForm.current);
 		const formObj = Object.fromEntries(formData);
-		console.log("formObj", {
-			total: formObj.total ? "" : 0,
-			items: [],
-			created_at: new Date(),
-			payment_due: formObj.payment_due,
-			description: formObj.description,
-			payment_terms: formObj.payment_terms,
-			client_name: formObj.client_name,
-			client_email: formObj.client_email,
-			status: status,
-			sender_street: formObj.sender_street,
-			sender_post_code: formObj.sender_post_code,
-			sender_city: formObj.sender_city,
-			sender_country: formObj.sender_country,
-			client_street: formObj.client_street,
-			client_city: formObj.client_city,
-			client_post_code: formObj.client_post_code,
-			client_country: formObj.client_country,
-			user_id: session.user.id,
-		});
 		const { data: invoice, error } = await supabase.from("invoices").insert([
 			{
-				total: formObj.total ? "" : 0,
-				items: [],
+				total: calcTotal(),
+				items: items,
 				created_at: new Date(),
 				payment_due: formObj.payment_due,
 				description: formObj.description,
@@ -111,7 +107,8 @@ export default function Home({ session }) {
 			setCreatePending(false);
 		}
 		setCreatePending(false);
-		console.log("invoice", invoice);
+		document.getElementById("offcanvasCloseBtn").click();
+		getInvoices();
 	};
 
 	if (invoicesPending) {
@@ -370,6 +367,7 @@ export default function Home({ session }) {
 					<button
 						type="button"
 						className="btn-close"
+						id="offcanvasCloseBtn"
 						data-bs-dismiss="offcanvas"
 						aria-label="Close"
 					></button>
@@ -538,17 +536,7 @@ export default function Home({ session }) {
 						</div>
 						{/* Item List */}
 						<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
-						<ItemList
-							defaultItems={[
-								{
-									id: 0,
-									name: "",
-									quantity: 0,
-									price: 0,
-									total: 0,
-								},
-							]}
-						/>
+						<ItemList items={items} setItems={setItems} />
 					</form>
 				</div>
 				<div className="card border-0 position-absolute bottom-0 start-0 w-100">
