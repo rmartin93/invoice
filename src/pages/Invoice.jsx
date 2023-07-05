@@ -10,6 +10,7 @@ export default function Invoice() {
 	const { id } = useParams();
 	const editForm = useRef();
 	const [deletePending, setDeletePending] = useState(false);
+	const [markingPaid, setMarkingPaid] = useState(false);
 	const handleDelete = () => {
 		const deleteBtn = document.getElementById("deleteModalBtn");
 		deleteBtn.click();
@@ -26,6 +27,19 @@ export default function Invoice() {
 			document.getElementById("deleteModalCloseBtn").click();
 			setDeletePending(false);
 		}
+	};
+	const markPaid = async () => {
+		setMarkingPaid(true);
+		const { data, error } = await supabase
+			.from("invoices")
+			.update({ status: "paid" })
+			.eq("id", id)
+			.single();
+		if (error) {
+			console.error(error);
+		}
+		setMarkingPaid(false);
+		console.log("data", data);
 	};
 	return (
 		<div className="invoice">
@@ -84,8 +98,20 @@ export default function Invoice() {
 								>
 									<div>Delete</div>
 								</button>
-								<button className="btn btn-primary">
-									<div>Mark as Paid</div>
+								<button
+									className="btn btn-primary"
+									type="button"
+									onClick={() => markPaid()}
+								>
+									{markingPaid && (
+										<div
+											className="spinner-border spinner-border-sm me-2"
+											role="status"
+										>
+											<span className="visually-hidden">Loading...</span>
+										</div>
+									)}
+									<span>Mark as Paid</span>
 								</button>
 							</div>
 						</div>
