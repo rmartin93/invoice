@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { supabase } from "../database/supabaseClient";
+import { BsGithub } from "react-icons/bs";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState("");
+	const [ghubLoading, setGhubLoading] = useState(false);
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -17,6 +19,17 @@ export default function Login() {
 			alert("Check your email for the login link!");
 		}
 		setLoading(false);
+	};
+
+	const loginWithGitHub = async () => {
+		setGhubLoading(true);
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: "github",
+		});
+		if (error) {
+			alert(error.message);
+		}
+		setGhubLoading(false);
 	};
 
 	return (
@@ -55,6 +68,29 @@ export default function Login() {
 								)}
 							</button>
 						</div>
+						<button
+							className="btn btn-secondary mt-3 mx-auto"
+							disabled={ghubLoading}
+							type="button"
+							onClick={() => loginWithGitHub()}
+						>
+							{ghubLoading ? (
+								<>
+									<div
+										className="spinner-border spinner-border-sm me-2"
+										role="status"
+									>
+										<span className="visually-hidden">Loading...</span>
+									</div>
+									<span className="mt-1">Logging In</span>
+								</>
+							) : (
+								<>
+									<BsGithub className="me-2" />
+									<span>Login With GitHub</span>
+								</>
+							)}
+						</button>
 					</form>
 				</div>
 			</div>
