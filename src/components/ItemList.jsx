@@ -42,6 +42,7 @@ export default function ItemList({ items, setItems }) {
 										newItems[index].name = e.target.value;
 										setItems(newItems);
 									}}
+									required
 								/>
 							</div>
 							<div className="col mb-3 quantity">
@@ -58,6 +59,7 @@ export default function ItemList({ items, setItems }) {
 										setItems(newItems);
 										calcTotal(index);
 									}}
+									required
 								/>
 							</div>
 							<div className="col mb-3 price">
@@ -74,6 +76,7 @@ export default function ItemList({ items, setItems }) {
 										setItems(newItems);
 										calcTotal(index);
 									}}
+									required
 								/>
 							</div>
 							<div className="col mb-3 total">

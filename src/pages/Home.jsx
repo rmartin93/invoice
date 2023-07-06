@@ -15,6 +15,7 @@ export default function Home({ session }) {
 	const createForm = useRef();
 	const dialog = useRef();
 	const [createPending, setCreatePending] = useState(false);
+	const [draftPending, setDraftPending] = useState(false);
 	const [invoicesPending, setInvoicesPending] = useState(false);
 	const [invoices, setInvoices] = useState([]);
 	const [draft, setDraft] = useState(false);
@@ -76,37 +77,110 @@ export default function Home({ session }) {
 		return total;
 	};
 
+	const validateForm = (data) => {
+		let isValid = true;
+		const errors = {};
+		if (!data.client_name) {
+			isValid = false;
+			errors.client_name = "Client name is required";
+		}
+		if (!data.client_email) {
+			isValid = false;
+			errors.client_email = "Client email is required";
+		}
+		if (!data.sender_street) {
+			isValid = false;
+			errors.sender_street = "Sender street is required";
+		}
+		if (!data.sender_city) {
+			isValid = false;
+			errors.sender_city = "Sender city is required";
+		}
+		if (!data.sender_post_code) {
+			isValid = false;
+			errors.sender_post_code = "Sender post code is required";
+		}
+		if (!data.sender_country) {
+			isValid = false;
+			errors.sender_country = "Sender country is required";
+		}
+		if (!data.client_street) {
+			isValid = false;
+			errors.client_street = "Client street is required";
+		}
+		if (!data.client_city) {
+			isValid = false;
+			errors.client_city = "Client city is required";
+		}
+		if (!data.client_post_code) {
+			isValid = false;
+			errors.client_post_code = "Client post code is required";
+		}
+		if (!data.client_country) {
+			isValid = false;
+			errors.client_country = "Client country is required";
+		}
+		if (!data.payment_terms) {
+			isValid = false;
+			errors.payment_terms = "Payment terms is required";
+		}
+		if (!data.description) {
+			isValid = false;
+			errors.description = "Description is required";
+		}
+		if (!data.payment_due) {
+			isValid = false;
+			errors.payment_due = "Payment due is required";
+		}
+		if (data.items.length === 0) {
+			isValid = false;
+			errors.items = "Items are required";
+		}
+		if (!isValid) {
+			alert(Object.values(errors).join("\n"));
+			setDraftPending(false);
+			setCreatePending(false);
+			createForm.current.classList.add("was-validated");
+		}
+		return isValid;
+	};
+
 	const handleCreate = async (status) => {
-		setCreatePending(true);
+		status == "draft" ? setDraftPending(true) : setCreatePending(true);
 		const formData = new FormData(createForm.current);
 		const formObj = Object.fromEntries(formData);
-		const { data: invoice, error } = await supabase.from("invoices").insert([
-			{
-				total: calcTotal(),
-				items: items,
-				created_at: new Date(),
-				payment_due: formObj.payment_due,
-				description: formObj.description,
-				payment_terms: formObj.payment_terms,
-				client_name: formObj.client_name,
-				client_email: formObj.client_email,
-				status: status,
-				sender_street: formObj.sender_street,
-				sender_post_code: formObj.sender_post_code,
-				sender_city: formObj.sender_city,
-				sender_country: formObj.sender_country,
-				client_street: formObj.client_street,
-				client_city: formObj.client_city,
-				client_post_code: formObj.client_post_code,
-				client_country: formObj.client_country,
-				user_id: session.user.id,
-			},
-		]);
+		const sendData = {
+			total: calcTotal(),
+			items: items,
+			created_at: new Date(),
+			payment_due: formObj.payment_due,
+			description: formObj.description,
+			payment_terms: formObj.payment_terms,
+			client_name: formObj.client_name,
+			client_email: formObj.client_email,
+			status: status,
+			sender_street: formObj.sender_street,
+			sender_post_code: formObj.sender_post_code,
+			sender_city: formObj.sender_city,
+			sender_country: formObj.sender_country,
+			client_street: formObj.client_street,
+			client_city: formObj.client_city,
+			client_post_code: formObj.client_post_code,
+			client_country: formObj.client_country,
+			user_id: session.user.id,
+		};
+		const isValid = validateForm(sendData);
+		if (!isValid) {
+			return;
+		}
+		const { data: invoice, error } = await supabase
+			.from("invoices")
+			.insert([sendData]);
 		if (error) {
 			console.log(error);
-			setCreatePending(false);
+			status == "draft" ? setDraftPending(false) : setCreatePending(false);
 		}
-		setCreatePending(false);
+		status == "draft" ? setDraftPending(false) : setCreatePending(false);
 		document.getElementById("offcanvasCloseBtn").click();
 		getInvoices();
 	};
@@ -385,6 +459,7 @@ export default function Home({ session }) {
 								id="streetAddress"
 								placeholder="19 Union Terrace"
 								name="sender_street"
+								required
 							/>
 						</div>
 						<div className="row">
@@ -398,6 +473,7 @@ export default function Home({ session }) {
 									id="city"
 									placeholder="London"
 									name="sender_city"
+									required
 								/>
 							</div>
 							<div className="col-6 col-md-4 mb-3">
@@ -410,6 +486,7 @@ export default function Home({ session }) {
 									id="postCode"
 									placeholder="E1 7HP"
 									name="sender_post_code"
+									required
 								/>
 							</div>
 							<div className="col-12 col-md-4 mb-3">
@@ -422,6 +499,7 @@ export default function Home({ session }) {
 									id="country"
 									placeholder="United Kingdom"
 									name="sender_country"
+									required
 								/>
 							</div>
 						</div>
@@ -436,6 +514,7 @@ export default function Home({ session }) {
 								id="name"
 								placeholder="Alex Grim"
 								name="client_name"
+								required
 							/>
 						</div>
 						<div className="mb-3">
@@ -448,6 +527,7 @@ export default function Home({ session }) {
 								id="email"
 								placeholder="alexgrim@mail.com"
 								name="client_email"
+								required
 							/>
 						</div>
 						<div className="mb-3">
@@ -460,6 +540,7 @@ export default function Home({ session }) {
 								id="streetAddress"
 								placeholder="84 Church Way"
 								name="client_street"
+								required
 							/>
 						</div>
 						<div className="row">
@@ -473,6 +554,7 @@ export default function Home({ session }) {
 									id="city"
 									placeholder="Bradford"
 									name="client_city"
+									required
 								/>
 							</div>
 							<div className="col-6 col-md-4 mb-3">
@@ -485,6 +567,7 @@ export default function Home({ session }) {
 									id="postCode"
 									placeholder="BD1 9PB"
 									name="client_post_code"
+									required
 								/>
 							</div>
 							<div className="col-12 col-md-4 mb-3">
@@ -497,6 +580,7 @@ export default function Home({ session }) {
 									id="country"
 									placeholder="United Kingdom"
 									name="client_country"
+									required
 								/>
 							</div>
 						</div>
@@ -508,6 +592,7 @@ export default function Home({ session }) {
 									type="date"
 									id="invoiceDate"
 									name="payment_due"
+									required
 								/>
 							</div>
 							<div className="col-12 col-md-6 mb-3">
@@ -516,6 +601,7 @@ export default function Home({ session }) {
 									className="form-select"
 									id="paymentTerms"
 									name="payment_terms"
+									required
 								>
 									<option value="Net 1 Day">Net 1 Day</option>
 									<option value="Net 7 Days">Net 7 Days</option>
@@ -531,6 +617,7 @@ export default function Home({ session }) {
 									id="projectDescription"
 									name="description"
 									placeholder="e.g. Graphic Design Service"
+									required
 								/>
 							</div>
 						</div>
@@ -549,9 +636,25 @@ export default function Home({ session }) {
 							Discard
 						</button>
 						<div className="d-flex gap-3 justify-content-end">
-							<button className="btn btn-dark">Save as Draft</button>
+							<button
+								className="btn btn-dark"
+								type="button"
+								onClick={() => handleCreate("draft")}
+								{...(draftPending && "disabled")}
+							>
+								{draftPending && (
+									<div
+										className="spinner-border spinner-border-sm me-2"
+										role="status"
+									>
+										<span className="visually-hidden">Loading...</span>
+									</div>
+								)}
+								<span>Save as Draft</span>
+							</button>
 							<button
 								className="btn btn-primary"
+								type="button"
 								onClick={() => handleCreate("pending")}
 								{...(createPending && "disabled")}
 							>
@@ -563,7 +666,7 @@ export default function Home({ session }) {
 										<span className="visually-hidden">Loading...</span>
 									</div>
 								)}
-								Save & Send
+								<span>Save & Send</span>
 							</button>
 						</div>
 					</div>

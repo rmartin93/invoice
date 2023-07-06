@@ -1,6 +1,10 @@
 const utils = {};
 
 utils.numberWithCommas = (num) => {
+	// If num is string, convert to number
+	if (typeof num === "string") {
+		num = Number(num);
+	}
 	// make number have commas and round to 2 decimal places
 	return num
 		.toFixed(2)
