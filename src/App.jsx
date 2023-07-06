@@ -27,7 +27,7 @@ function App() {
 		<BrowserRouter>
 			<ScrollToTop />
 			<div className="layout-wrapper" data-bs-theme={theme}>
-				<NavBar />
+				<NavBar session={session} />
 				<main>
 					<Routes>
 						<Route path="/" element={<Home session={session} />} />
