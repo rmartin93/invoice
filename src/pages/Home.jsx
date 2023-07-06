@@ -18,9 +18,9 @@ export default function Home({ session }) {
 	const [draftPending, setDraftPending] = useState(false);
 	const [invoicesPending, setInvoicesPending] = useState(false);
 	const [invoices, setInvoices] = useState([]);
-	const [draft, setDraft] = useState(false);
-	const [pending, setPending] = useState(false);
-	const [paid, setPaid] = useState(false);
+	const [draft, setDraft] = useState(true);
+	const [pending, setPending] = useState(true);
+	const [paid, setPaid] = useState(true);
 	const [chevron, setChevron] = useState("down");
 	const [items, setItems] = useState([
 		{
@@ -186,6 +186,44 @@ export default function Home({ session }) {
 		getInvoices();
 	};
 
+	const updateFilter = (filter) => {
+		if (filter === "draft") {
+			setDraft(!draft);
+		} else if (filter === "pending") {
+			setPending(!pending);
+		} else if (filter === "paid") {
+			setPaid(!paid);
+		}
+	};
+	// Listen for changes in the filter values and update the list
+	useEffect(() => {
+		updateList();
+	}, [draft, pending, paid]);
+	const updateList = () => {
+		// Hide all Links with the data-invoicestatus equal to the filterValue
+		document.querySelectorAll(`[data-invoicestatus]`).forEach((link) => {
+			let status = link.dataset.invoicestatus;
+			if (status === "draft" && !draft) {
+				link.classList.add("d-none");
+			}
+			if (status === "draft" && draft) {
+				link.classList.remove("d-none");
+			}
+			if (status === "pending" && !pending) {
+				link.classList.add("d-none");
+			}
+			if (status === "pending" && pending) {
+				link.classList.remove("d-none");
+			}
+			if (status === "paid" && !paid) {
+				link.classList.add("d-none");
+			}
+			if (status === "paid" && paid) {
+				link.classList.remove("d-none");
+			}
+		});
+	};
+
 	if (invoicesPending) {
 		return (
 			<section
@@ -256,7 +294,7 @@ export default function Home({ session }) {
 										<div
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
-												setDraft(!draft);
+												updateFilter("draft");
 											}}
 										>
 											<input
@@ -264,7 +302,7 @@ export default function Home({ session }) {
 												name="draft"
 												id="draft"
 												checked={draft}
-												onChange={() => console.log("draft changed")}
+												onChange={() => console.log("changed")}
 											/>
 											<label
 												htmlFor="draft"
@@ -277,7 +315,7 @@ export default function Home({ session }) {
 										<div
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
-												setPending(!pending);
+												updateFilter("pending");
 											}}
 										>
 											<input
@@ -285,7 +323,7 @@ export default function Home({ session }) {
 												name="pending"
 												id="pending"
 												checked={pending}
-												onChange={() => console.log("pending changed")}
+												onChange={() => console.log("changed")}
 											/>
 											<label
 												htmlFor="pending"
@@ -298,7 +336,7 @@ export default function Home({ session }) {
 										<div
 											className="filter-checkbox d-flex align-items-center"
 											onClick={() => {
-												setPaid(!paid);
+												updateFilter("paid");
 											}}
 										>
 											<input
@@ -306,7 +344,7 @@ export default function Home({ session }) {
 												name="paid"
 												id="paid"
 												checked={paid}
-												onChange={() => console.log("paid changed")}
+												onChange={() => console.log("changed")}
 											/>
 											<label
 												htmlFor="paid"
@@ -339,6 +377,7 @@ export default function Home({ session }) {
 							to={`/invoice/${invoice.id}`}
 							className="row mb-3 invoice-row"
 							key={invoice.id}
+							data-invoicestatus={invoice.status}
 						>
 							<div className="col-12">
 								<div className="card border-0 shadow-sm rounded-4">
