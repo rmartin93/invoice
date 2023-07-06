@@ -12,6 +12,14 @@ utils.numberWithCommas = (num) => {
 		.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+utils.makeNumber = (num) => {
+	// Convert string to number with no commas and 2 decimal places
+	if (typeof num === "string") {
+		num = parseFloat(num);
+	}
+	return num.toFixed(2);
+};
+
 utils.capitalizeFirstLetter = (string) => {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 };

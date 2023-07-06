@@ -72,6 +72,7 @@ export default function Home({ session }) {
 	const calcTotal = () => {
 		let total = 0;
 		items.forEach((item) => {
+			item.total = item.price * item.quantity;
 			total += item.total;
 		});
 		return total;

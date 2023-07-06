@@ -31,7 +31,10 @@ function App() {
 				<main>
 					<Routes>
 						<Route path="/" element={<Home session={session} />} />
-						<Route path="/invoice/:id" element={<Invoice />} />
+						<Route
+							path="/invoice/:id"
+							element={<Invoice session={session} />}
+						/>
 						<Route path="/login" element={<Login />} />
 					</Routes>
 				</main>

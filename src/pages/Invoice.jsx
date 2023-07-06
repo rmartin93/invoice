@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { BiSolidChevronLeft } from "react-icons/bi";
 import { BsFillCircleFill } from "react-icons/bs";
-import { HiPlus } from "react-icons/hi";
-import { FaTrash } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../database/supabaseClient";
 import utils from "../helpers/Utils";
-export default function Invoice() {
+import ItemList from "../components/ItemList";
+export default function Invoice({ session }) {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const editForm = useRef();
@@ -14,6 +13,8 @@ export default function Invoice() {
 	const [markingPaid, setMarkingPaid] = useState(false);
 	const [getInvoicePending, setGetInvoicePending] = useState(false);
 	const [invoice, setInvoice] = useState(null);
+	const [items, setItems] = useState([]);
+	const [updating, setUpdating] = useState(false);
 
 	const getInvoice = async () => {
 		setGetInvoicePending(true);
@@ -28,11 +29,12 @@ export default function Invoice() {
 		}
 		setGetInvoicePending(false);
 		setInvoice(data);
+		setItems(data.items);
 	};
 	useEffect(() => {
 		getInvoice();
 	}, []);
-	console.log("invoice", invoice);
+	// console.log("invoice", invoice);
 	const handleDelete = () => {
 		const deleteBtn = document.getElementById("deleteModalBtn");
 		deleteBtn.click();
@@ -62,6 +64,124 @@ export default function Invoice() {
 		}
 		setMarkingPaid(false);
 		console.log("data", data);
+	};
+
+	const calcTotal = () => {
+		let total = 0;
+		items.forEach((item) => {
+			item.total = item.price * item.quantity;
+			total += item.total;
+		});
+		return total;
+	};
+
+	const validateForm = (data) => {
+		let isValid = true;
+		const errors = {};
+		if (!data.client_name) {
+			isValid = false;
+			errors.client_name = "Client name is required";
+		}
+		if (!data.client_email) {
+			isValid = false;
+			errors.client_email = "Client email is required";
+		}
+		if (!data.sender_street) {
+			isValid = false;
+			errors.sender_street = "Sender street is required";
+		}
+		if (!data.sender_city) {
+			isValid = false;
+			errors.sender_city = "Sender city is required";
+		}
+		if (!data.sender_post_code) {
+			isValid = false;
+			errors.sender_post_code = "Sender post code is required";
+		}
+		if (!data.sender_country) {
+			isValid = false;
+			errors.sender_country = "Sender country is required";
+		}
+		if (!data.client_street) {
+			isValid = false;
+			errors.client_street = "Client street is required";
+		}
+		if (!data.client_city) {
+			isValid = false;
+			errors.client_city = "Client city is required";
+		}
+		if (!data.client_post_code) {
+			isValid = false;
+			errors.client_post_code = "Client post code is required";
+		}
+		if (!data.client_country) {
+			isValid = false;
+			errors.client_country = "Client country is required";
+		}
+		if (!data.payment_terms) {
+			isValid = false;
+			errors.payment_terms = "Payment terms is required";
+		}
+		if (!data.description) {
+			isValid = false;
+			errors.description = "Description is required";
+		}
+		if (!data.payment_due) {
+			isValid = false;
+			errors.payment_due = "Payment due is required";
+		}
+		if (data.items.length === 0) {
+			isValid = false;
+			errors.items = "Items are required";
+		}
+		if (!isValid) {
+			alert(Object.values(errors).join("\n"));
+			setUpdating(false);
+			createForm.current.classList.add("was-validated");
+		}
+		return isValid;
+	};
+
+	const handleUpdate = async () => {
+		setUpdating(true);
+		const formData = new FormData(editForm.current);
+		const formObj = Object.fromEntries(formData);
+		const total = calcTotal();
+		const sendData = {
+			total: total,
+			items: items,
+			created_at: new Date(),
+			payment_due: total,
+			description: formObj.description,
+			payment_terms: formObj.payment_terms,
+			client_name: formObj.client_name,
+			client_email: formObj.client_email,
+			sender_street: formObj.sender_street,
+			sender_post_code: formObj.sender_post_code,
+			sender_city: formObj.sender_city,
+			sender_country: formObj.sender_country,
+			client_street: formObj.client_street,
+			client_city: formObj.client_city,
+			client_post_code: formObj.client_post_code,
+			client_country: formObj.client_country,
+			user_id: session.user.id,
+		};
+		const isValid = validateForm(sendData);
+		if (!isValid) {
+			return;
+		}
+		const { error } = await supabase
+			.from("invoices")
+			.update([sendData])
+			.eq("id", id)
+			.single();
+		if (error) {
+			console.log(error);
+			setUpdating(false);
+		}
+		setUpdating(false);
+		document.getElementById("offcanvasCloseBtn").click();
+		getInvoice();
 	};
 
 	if (getInvoicePending) {
@@ -192,7 +312,9 @@ export default function Invoice() {
 										<p className="text-info">Invoice Date</p>
 										<p className="fw-bolder fs-5">{invoice.created_at}</p>
 										<p className="text-info mt-4">Payment Due</p>
-										<p className="fw-bolder fs-5">{invoice.payment_due}</p>
+										<p className="fw-bolder fs-5">
+											$ {utils.numberWithCommas(invoice.payment_due)}
+										</p>
 									</div>
 									<div className="col-6 col-md-4">
 										<p className="text-info">Bill To</p>
@@ -325,7 +447,7 @@ export default function Invoice() {
 				>
 					<div className="offcanvas-header p-5 pb-4">
 						<h5 className="offcanvas-title dark-white" id="offcanvasLabel">
-							Edit # {id}
+							Edit
 						</h5>
 						<button
 							type="button"
@@ -338,256 +460,185 @@ export default function Invoice() {
 						<form ref={editForm} style={{ paddingBottom: "6rem" }}>
 							<h6 className="text-primary mb-4">Bill From</h6>
 							<div className="mb-3">
-								<label className="ps-0" htmlFor="streetAddress">
+								<label className="ps-0" htmlFor="sender_street">
 									Street Address
 								</label>
 								<input
 									type="text"
 									className="form-control"
-									id="streetAddress"
-									placeholder="19 Union Terrace"
-									name="fromAddress"
+									id="sender_street"
+									name="sender_street"
+									defaultValue={invoice.sender_street}
+									required
 								/>
 							</div>
 							<div className="row">
 								<div className="col-6 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="city">
+									<label className="ps-0" htmlFor="sender_city">
 										City
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="city"
-										placeholder="London"
-										name="fromCity"
+										id="sender_city"
+										name="sender_city"
+										defaultValue={invoice.sender_city}
+										required
 									/>
 								</div>
 								<div className="col-6 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="postCode">
+									<label className="ps-0" htmlFor="sender_post_code">
 										Post Code
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="postCode"
-										placeholder="E1 7HP"
-										name="fromPostCode"
+										id="sender_post_code"
+										name="sender_post_code"
+										defaultValue={invoice.sender_post_code}
+										required
 									/>
 								</div>
 								<div className="col-12 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="country">
+									<label className="ps-0" htmlFor="sender_country">
 										Country
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="country"
-										placeholder="United Kingdom"
-										name="fromCountry"
+										id="sender_country"
+										name="sender_country"
+										defaultValue={invoice.sender_country}
+										required
 									/>
 								</div>
 							</div>
 							<h6 className="text-primary my-4">Bill To</h6>
 							<div className="mb-3">
-								<label className="ps-0" htmlFor="name">
+								<label className="ps-0" htmlFor="client_name">
 									Client's Name
 								</label>
 								<input
 									type="text"
 									className="form-control"
-									id="name"
-									placeholder="Alex Grim"
-									name="clientName"
+									id="client_name"
+									name="client_name"
+									defaultValue={invoice.client_name}
+									required
 								/>
 							</div>
 							<div className="mb-3">
-								<label className="ps-0" htmlFor="email">
+								<label className="ps-0" htmlFor="client_email">
 									Client's Email
 								</label>
 								<input
 									type="text"
 									className="form-control"
 									id="email"
-									placeholder="alexgrim@mail.com"
-									name="clientEmail"
+									name="client_email"
+									defaultValue={invoice.client_email}
+									required
 								/>
 							</div>
 							<div className="mb-3">
-								<label className="ps-0" htmlFor="streetAddress">
+								<label className="ps-0" htmlFor="client_street">
 									Street Address
 								</label>
 								<input
 									type="text"
 									className="form-control"
-									id="streetAddress"
-									placeholder="84 Church Way"
-									name="clientAddress"
+									id="client_street"
+									name="client_street"
+									defaultValue={invoice.client_street}
+									required
 								/>
 							</div>
 							<div className="row">
 								<div className="col-6 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="city">
+									<label className="ps-0" htmlFor="client_city">
 										City
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="city"
-										placeholder="Bradford"
-										name="clientCity"
+										id="client_city"
+										name="client_city"
+										defaultValue={invoice.client_city}
+										required
 									/>
 								</div>
 								<div className="col-6 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="postCode">
+									<label className="ps-0" htmlFor="client_post_code">
 										Post Code
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="postCode"
-										placeholder="BD1 9PB"
-										name="clientPostCode"
+										id="client_post_code"
+										name="client_post_code"
+										defaultValue={invoice.client_post_code}
+										required
 									/>
 								</div>
 								<div className="col-12 col-md-4 mb-3">
-									<label className="ps-0" htmlFor="country">
+									<label className="ps-0" htmlFor="client_country">
 										United Kingdom
 									</label>
 									<input
 										type="text"
 										className="form-control"
-										id="country"
-										placeholder="United Kingdom"
-										name="clientCountry"
+										id="client_country"
+										name="client_country"
+										defaultValue={invoice.client_country}
+										required
 									/>
 								</div>
 							</div>
 							<div className="row">
 								<div className="col-12 col-md-6 mb-3">
-									<label className="readonly" htmlFor="invoiceDate">
+									<label className="readonly" htmlFor="created_at">
 										Invoice Date
 									</label>
 									<input
 										className="form-control"
 										type="date"
-										id="invoiceDate"
-										name="invoiceDate"
-										value="2021-08-30"
+										id="created_at"
+										name="created_at"
+										defaultValue={invoice.created_at}
 										readOnly
 									/>
 								</div>
 								<div className="col-12 col-md-6 mb-3">
-									<label htmlFor="paymentTerms">Payment Terms</label>
+									<label htmlFor="payment_terms">Payment Terms</label>
 									<select
 										className="form-select"
-										id="paymentTerms"
-										name="paymentTerms"
+										id="payment_terms"
+										name="payment_terms"
+										defaultValue={invoice.payment_terms}
+										required
 									>
-										<option value="1">Net 1 Day</option>
-										<option value="7">Net 7 Days</option>
-										<option value="14">Net 14 Days</option>
-										<option value="30">Net 30 Days</option>
+										<option value="Net 1 Day">Net 1 Day</option>
+										<option value="Net 7 Days">Net 7 Days</option>
+										<option value="Net 14 Days">Net 14 Days</option>
+										<option value="Net 30 Days">Net 30 Days</option>
 									</select>
 								</div>
 								<div className="col-12 mb-3">
-									<label htmlFor="projectDescription">
-										Project Description
-									</label>
+									<label htmlFor="description">Project Description</label>
 									<input
 										className="form-control"
 										type="text"
-										id="projectDescription"
-										name="projectDescription"
+										id="description"
+										name="description"
 										placeholder="e.g. Graphic Design Service"
+										defaultValue={invoice.description}
+										required
 									/>
 								</div>
 							</div>
 							{/* Item List */}
 							<p className="fw-bold fs-5 text-secondaryAccent">Item List</p>
-							<div className="row item-list align-items-center gx-3">
-								<div className="col-12 col-md mb-3">
-									<label htmlFor="itemName">Item Name</label>
-									<input
-										type="text"
-										className="form-control"
-										id="itemName"
-										name="itemName"
-									/>
-								</div>
-								<div className="col mb-3 quantity">
-									<label htmlFor="itemQuantity">Qty.</label>
-									<input
-										type="number"
-										className="form-control"
-										id="itemQuantity"
-										name="itemQuantity"
-									/>
-								</div>
-								<div className="col mb-3 price">
-									<label htmlFor="itemPrice">Price</label>
-									<input
-										type="number"
-										className="form-control"
-										id="itemPrice"
-										name="itemPrice"
-									/>
-								</div>
-								<div className="col mb-3 total">
-									<label htmlFor="itemTotal">Total</label>
-									<div className="d-flex justify-content-between align-items-center gap-2">
-										<span className="fw-bold text-info fs-6">$10,000.00</span>
-										<button className="btn btn-link btn-icon text-info pe-1 ms-3">
-											<FaTrash className="delete-item fs-6" />
-										</button>
-									</div>
-								</div>
-							</div>
-							<div className="row item-list align-items-center gx-3">
-								<div className="col-12 col-md mb-3">
-									<label htmlFor="itemName">Item Name</label>
-									<input
-										type="text"
-										className="form-control"
-										id="itemName"
-										name="itemName"
-									/>
-								</div>
-								<div className="col mb-3 quantity">
-									<label htmlFor="itemQuantity">Qty.</label>
-									<input
-										type="number"
-										className="form-control"
-										id="itemQuantity"
-										name="itemQuantity"
-									/>
-								</div>
-								<div className="col mb-3 price">
-									<label htmlFor="itemPrice">Price</label>
-									<input
-										type="number"
-										className="form-control"
-										id="itemPrice"
-										name="itemPrice"
-									/>
-								</div>
-								<div className="col mb-3 total">
-									<label htmlFor="itemTotal">Total</label>
-									<div className="d-flex justify-content-between align-items-center gap-2">
-										<span className="fw-bold text-info fs-6">$100.00</span>
-										<button className="btn btn-link btn-icon text-info pe-1 ms-3">
-											<FaTrash className="delete-item fs-6" />
-										</button>
-									</div>
-								</div>
-							</div>
-							<div className="row">
-								<div className="col-12">
-									<button className="btn btn-light btn-icon-2 w-100">
-										<HiPlus className="me-2" />
-										<div>Add New Item</div>
-									</button>
-								</div>
-							</div>
+							<ItemList items={items} setItems={setItems} />
 						</form>
 					</div>
 					<div className="card border-0 position-absolute bottom-0 start-0 w-100">
@@ -596,10 +647,26 @@ export default function Invoice() {
 								className="btn btn-light"
 								data-bs-dismiss="offcanvas"
 								aria-label="Close"
+								id="offcanvasCloseBtn"
 							>
 								Cancel
 							</button>
-							<button className="btn btn-primary">Save Changes</button>
+							<button
+								className="btn btn-primary"
+								type="button"
+								onClick={() => handleUpdate()}
+								{...(updating && "disabled")}
+							>
+								{updating && (
+									<div
+										className="spinner-border spinner-border-sm me-2"
+										role="status"
+									>
+										<span className="visually-hidden">Loading...</span>
+									</div>
+								)}
+								<span>Save Changes</span>
+							</button>
 						</div>
 					</div>
 				</div>

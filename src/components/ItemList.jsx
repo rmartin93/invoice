@@ -20,8 +20,12 @@ export default function ItemList({ items, setItems }) {
 	const calcTotal = (index) => {
 		const quantity = document.getElementsByName(`quantity`)[index].value;
 		const price = document.getElementsByName(`price`)[index].value;
-		const total = utils.numberWithCommas(quantity * price);
-		document.getElementsByName(`total`)[index].value = "$ " + total;
+		const total = quantity * price;
+		document.getElementsByName(`total`)[index].value =
+			"$ " + utils.numberWithCommas(total);
+		const newItems = [...items];
+		newItems[index].total = total;
+		setItems(newItems);
 	};
 	return (
 		<>
@@ -85,7 +89,7 @@ export default function ItemList({ items, setItems }) {
 									<input
 										className="form-control fw-bold text-info fs-6 border-0"
 										name="total"
-										defaultValue={item.total}
+										defaultValue={"$ " + utils.numberWithCommas(item.total)}
 										readOnly
 									/>
 									<button
