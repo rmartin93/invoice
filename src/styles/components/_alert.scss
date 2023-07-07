@@ -1,5 +1,13 @@
 @use "../abstracts/colors" as color;
 .invoice-list {
+	.invoice-rows {
+		max-height: 550px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		@media (min-width: 576px) {
+			max-height: 75vh;
+		}
+	}
 	.invoice-row {
 		text-decoration: none;
 		color: color.$dark;

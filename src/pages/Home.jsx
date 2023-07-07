@@ -371,101 +371,103 @@ export default function Home({ session }) {
 						</div>
 					</div>
 				</div>
-				{invoices.map((invoice) => {
-					return (
-						<Link
-							to={`/invoice/${invoice.id}`}
-							className="row mb-3 invoice-row"
-							key={invoice.id}
-							data-invoicestatus={invoice.status}
-						>
-							<div className="col-12">
-								<div className="card border-0 shadow-sm rounded-4">
-									<div className="card-body">
-										{/* id, date, name, amt, status, icon (med and up) */}
-										<div className="row d-md-none">
-											<div className="col-8">
-												<p className="mb-3">
-													<span className="text-info fs-6">#</span>
-													<span className="ms-1 fw-bold fs-6">
-														{utils.reduceString(invoice.id)}
-													</span>
-												</p>
-												<p className="text-info mb-2">
-													Due {invoice.payment_due}
-												</p>
-												<p className="fw-bold fs-6 mb-0">
-													$ {utils.numberWithCommas(invoice.total)}
-												</p>
-											</div>
-											<div className="col-4 d-flex flex-column align-items-end">
-												<p className="text-info text-end">
-													{invoice.client_name}
-												</p>
-												<div
-													className={`alert alert-status status border-0 text-center mb-0 alert-${
-														invoice.status === "draft"
-															? "secondary"
-															: invoice.status === "pending"
-															? "warning"
-															: "success"
-													}`}
-												>
-													<BsFillCircleFill className="me-2" />
-													<span>
-														{utils.capitalizeFirstLetter(invoice.status)}
-													</span>
-												</div>
-											</div>
-										</div>
-										<div className="row d-none d-md-flex align-items-center justify-content-between">
-											<div className="col-6">
-												<div className="d-flex">
-													<p className="mb-0 flex-grow-1">
+				<div className="invoice-rows">
+					{invoices.map((invoice) => {
+						return (
+							<Link
+								to={`/invoice/${invoice.id}`}
+								className="row mb-3 invoice-row"
+								key={invoice.id}
+								data-invoicestatus={invoice.status}
+							>
+								<div className="col-12">
+									<div className="card border-0 shadow-sm rounded-4">
+										<div className="card-body">
+											{/* id, date, name, amt, status, icon (med and up) */}
+											<div className="row d-md-none">
+												<div className="col-8">
+													<p className="mb-3">
 														<span className="text-info fs-6">#</span>
 														<span className="ms-1 fw-bold fs-6">
 															{utils.reduceString(invoice.id)}
 														</span>
 													</p>
-													<p className="text-info mb-0 flex-grow-1">
+													<p className="text-info mb-2">
 														Due {invoice.payment_due}
 													</p>
-													<p className="text-info mb-0 flex-grow-1">
-														{invoice.client_name}
-													</p>
-												</div>
-											</div>
-											<div className="col-6">
-												<div className="d-flex align-items-center gap-4">
-													<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
+													<p className="fw-bold fs-6 mb-0">
 														$ {utils.numberWithCommas(invoice.total)}
 													</p>
-													<div>
-														<div
-															className={`alert alert-status status border-0 text-center mb-0 alert-${
-																invoice.status === "draft"
-																	? "secondary"
-																	: invoice.status === "pending"
-																	? "warning"
-																	: "success"
-															}`}
-														>
-															<BsFillCircleFill className="me-2" />
-															<span>
-																{utils.capitalizeFirstLetter(invoice.status)}
-															</span>
-														</div>
+												</div>
+												<div className="col-4 d-flex flex-column align-items-end">
+													<p className="text-info text-end">
+														{invoice.client_name}
+													</p>
+													<div
+														className={`alert alert-status status border-0 text-center mb-0 alert-${
+															invoice.status === "draft"
+																? "secondary"
+																: invoice.status === "pending"
+																? "warning"
+																: "success"
+														}`}
+													>
+														<BsFillCircleFill className="me-2" />
+														<span>
+															{utils.capitalizeFirstLetter(invoice.status)}
+														</span>
 													</div>
-													<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
+												</div>
+											</div>
+											<div className="row d-none d-md-flex align-items-center justify-content-between">
+												<div className="col-6">
+													<div className="d-flex">
+														<p className="mb-0 flex-grow-1">
+															<span className="text-info fs-6">#</span>
+															<span className="ms-1 fw-bold fs-6">
+																{utils.reduceString(invoice.id)}
+															</span>
+														</p>
+														<p className="text-info mb-0 flex-grow-1">
+															Due {invoice.payment_due}
+														</p>
+														<p className="text-info mb-0 flex-grow-1">
+															{invoice.client_name}
+														</p>
+													</div>
+												</div>
+												<div className="col-6">
+													<div className="d-flex align-items-center gap-4">
+														<p className="fw-bold fs-6 mb-0 flex-grow-1 text-end">
+															$ {utils.numberWithCommas(invoice.total)}
+														</p>
+														<div>
+															<div
+																className={`alert alert-status status border-0 text-center mb-0 alert-${
+																	invoice.status === "draft"
+																		? "secondary"
+																		: invoice.status === "pending"
+																		? "warning"
+																		: "success"
+																}`}
+															>
+																<BsFillCircleFill className="me-2" />
+																<span>
+																	{utils.capitalizeFirstLetter(invoice.status)}
+																</span>
+															</div>
+														</div>
+														<BiSolidChevronRight className="ms-auto text-primary fw-bolder fs-5" />
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</Link>
-					);
-				})}
+							</Link>
+						);
+					})}
+				</div>
 			</section>
 			{/* Offcanvas Create Form */}
 			<div
