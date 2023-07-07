@@ -16,12 +16,15 @@
 
 .item-list {
 	.quantity {
-		max-width: 90px;
+		max-width: 60px;
 	}
 	.price {
-		max-width: 140px;
+		max-width: 90px;
 	}
 	.total {
 		max-width: 180px;
+		input {
+			min-width: 110px;
+		}
 	}
 }

@@ -262,14 +262,14 @@ export default function Home({ session }) {
 		<div className="home">
 			<section className="invoice-list container">
 				<div className="row mb-3">
-					<div className="col-6">
+					<div className="col-12 col-sm-6 text-center text-sm-start">
 						<h1 className="mb-0 dark-white">Invoices</h1>
 						<p className="text-secondaryOther">
 							There are {invoices.length} total invoices
 						</p>
 					</div>
-					<div className="col-6">
-						<div className="d-flex justify-content-end align-items-center">
+					<div className="col-12 col-sm-6">
+						<div className="filter-create-row">
 							<div
 								className="custom-popover position-relative"
 								style={{ zIndex: 100 }}

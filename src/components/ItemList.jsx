@@ -93,7 +93,7 @@ export default function ItemList({ items, setItems }) {
 										readOnly
 									/>
 									<button
-										className="btn btn-link btn-icon text-info pe-1 ms-3"
+										className="btn btn-link btn-icon text-info pe-1"
 										type="button"
 										onClick={() => handleDelete(item)}
 									>
