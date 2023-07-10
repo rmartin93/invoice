@@ -2,7 +2,29 @@ import logo from "../assets/logo-with-bg.svg";
 import userIcon from "../assets/image-avatar.jpg";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { useTheme } from "../hooks/useTheme";
+import { supabase } from "../database/supabaseClient";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { BiLink, BiUnlink } from "react-icons/bi";
 export default function NavBar({ session }) {
+	const [webhookUrl, setWebhookUrl] = useState(null);
+	useEffect(() => {
+		getWebhookUrl();
+	}, [session]);
+	const getWebhookUrl = async () => {
+		const { data, error } = await supabase
+			.from("webhooks")
+			.select("webhook_url")
+			.eq("user_id", session.user.id)
+			.single();
+		if (error) {
+			console.log("error: ", error);
+			setWebhookUrl(null);
+			return;
+		}
+		console.log("data: ", data);
+		setWebhookUrl(data.webhook_url);
+	};
 	const { theme, toggleTheme } = useTheme();
 	const identities = session.user.identities;
 	let avatarUrl = null;
@@ -13,8 +35,13 @@ export default function NavBar({ session }) {
 	});
 	return (
 		<div className="myNavBar text-info bg-secondary">
-			<img className="logo bg-primary rounded-end-4" src={logo} alt="logo" />
+			<Link to="/">
+				<img className="logo bg-primary rounded-end-4" src={logo} alt="logo" />
+			</Link>
 			<div className="nav-btns">
+				<Link to="/connect" className="btn btn-icon-only text-info">
+					{webhookUrl ? <BiLink /> : <BiUnlink />}
+				</Link>
 				<button
 					type="button"
 					className="btn btn-icon-only text-info"

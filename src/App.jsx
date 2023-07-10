@@ -7,6 +7,7 @@ import Invoice from "./pages/Invoice";
 import Login from "./pages/Login";
 import { useEffect, useState } from "react";
 import { supabase } from "./database/supabaseClient";
+import Connect from "./pages/Connect";
 function App() {
 	const { theme } = useTheme();
 	const [session, setSession] = useState(null);
@@ -34,6 +35,10 @@ function App() {
 						<Route
 							path="/invoice/:id"
 							element={<Invoice session={session} />}
+						/>
+						<Route
+							path="/connect"
+							element={<Connect session={session} setSession={setSession} />}
 						/>
 						<Route path="/login" element={<Login />} />
 					</Routes>

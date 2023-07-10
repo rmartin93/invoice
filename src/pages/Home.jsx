@@ -174,16 +174,44 @@ export default function Home({ session }) {
 		if (!isValid) {
 			return;
 		}
-		const { data: invoice, error } = await supabase
-			.from("invoices")
-			.insert([sendData]);
+		const { error } = await supabase.from("invoices").insert([sendData]);
 		if (error) {
 			console.log(error);
 			status == "draft" ? setDraftPending(false) : setCreatePending(false);
 		}
-		status == "draft" ? setDraftPending(false) : setCreatePending(false);
-		document.getElementById("offcanvasCloseBtn").click();
-		getInvoices();
+		if (status == "draft") {
+			setDraftPending(false);
+			document.getElementById("offcanvasCloseBtn").click();
+		} else {
+			sendInvoice(sendData);
+		}
+	};
+
+	const sendInvoice = async (invoice) => {
+		// Get webhook_url from webhooks table
+		const { data: webhook, error } = await supabase
+			.from("webhooks")
+			.select("webhook_url")
+			.eq("user_id", session.user.id)
+			.single();
+		if (error) {
+			console.log(error);
+			setCreatePending(false);
+			return;
+		}
+		// Send invoice to webhook_url
+		const response = await fetch(webhook.webhook_url, {
+			method: "POST",
+			body: JSON.stringify(invoice),
+		});
+		if (response.status === 200) {
+			console.log("Invoice sent successfully");
+			setCreatePending(false);
+			document.getElementById("offcanvasCloseBtn").click();
+			getInvoices();
+		} else {
+			console.log("Invoice failed to send");
+		}
 	};
 
 	const updateFilter = (filter) => {
