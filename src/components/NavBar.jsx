@@ -22,7 +22,6 @@ export default function NavBar({ session }) {
 			setWebhookUrl(null);
 			return;
 		}
-		console.log("data: ", data);
 		setWebhookUrl(data.webhook_url);
 	};
 	const { theme, toggleTheme } = useTheme();

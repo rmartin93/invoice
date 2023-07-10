@@ -17,7 +17,6 @@ export default function Connect({ session, setSession }) {
 			return;
 		}
 		setWebhook(data.webhook_url);
-		console.log("data: ", data);
 	};
 	const [formPending, setFormPending] = useState(false);
 	const userId = session.user.id;
