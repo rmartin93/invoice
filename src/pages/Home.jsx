@@ -210,7 +210,11 @@ export default function Home({ session }) {
 			document.getElementById("offcanvasCloseBtn").click();
 			getInvoices();
 		} else {
-			console.log("Invoice failed to send");
+			alert(
+				"No webhook found. If you want the invoice to actually go somewhere, please add a webhook by clicking the link icon in the navigation menu."
+			);
+			setCreatePending(false);
+			document.getElementById("offcanvasCloseBtn").click();
 		}
 	};
 
