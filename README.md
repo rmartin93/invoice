@@ -33,7 +33,7 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://invoice-olive.vercel.app/)
+- Solution URL: [Invoice Boi](https://invoice-olive.vercel.app/)
 
 ## My process
 
