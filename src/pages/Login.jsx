@@ -37,11 +37,11 @@ export default function Login() {
 			<div className="row align-items-center h-100">
 				<div className="col-md-6 offset-md-3 text-center">
 					<h1 className="text-primary">Login</h1>
-					<p className="description">
+					{/* <p className="description">
 						Sign in via magic link with your email below
-					</p>
+					</p> */}
 					<form onSubmit={handleLogin}>
-						<div>
+						{/* <div>
 							<input
 								className="form-control mb-4"
 								type="email"
@@ -50,8 +50,8 @@ export default function Login() {
 								required={true}
 								onChange={(e) => setEmail(e.target.value)}
 							/>
-						</div>
-						<div>
+						</div> */}
+						{/* <div>
 							<button className="btn btn-primary mx-auto" disabled={loading}>
 								{loading ? (
 									<>
@@ -67,7 +67,7 @@ export default function Login() {
 									<span>Send magic link</span>
 								)}
 							</button>
-						</div>
+						</div> */}
 						<button
 							className="btn btn-secondary mt-3 mx-auto"
 							disabled={ghubLoading}
